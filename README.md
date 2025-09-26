@@ -26,7 +26,7 @@ PyMergence provides a comprehensive set of tools for analyzing causal emergence 
 ### Install from source
 
 ```bash
-git clone https://github.com/yourusername/pymergence.git
+git clone https://github.com/EI-research-group/pymergence.git
 cd pymergence
 pip install -e .
 ```
@@ -69,7 +69,7 @@ If you use PyMergence in your research, please cite:
   author={Jansma, Abel and Hoel, Erik},
   year={2025},
   url={https://github.com/EI-research-group/pymergence},
-  doi={10.5281/zenodo.XXXXXXX}
+  doi={10.5281/zenodo.17210078}
 }
 ```
 
