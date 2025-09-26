@@ -1,0 +1,855 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pymergence package &mdash; PyMergence 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="PyMergence documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PyMergence
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">direct links:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pymergence package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pymergence.CoarseGraining">pymergence.CoarseGraining module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.CoarseGraining.CoarseGraining"><code class="docutils literal notranslate"><span class="pre">CoarseGraining</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.CoarseGraining.CoarseGraining.coarse_grain_distribution"><code class="docutils literal notranslate"><span class="pre">CoarseGraining.coarse_grain_distribution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.CoarseGraining.CoarseGraining.is_refinement_of"><code class="docutils literal notranslate"><span class="pre">CoarseGraining.is_refinement_of()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.CoarseGraining.generate_all_coarse_grainings"><code class="docutils literal notranslate"><span class="pre">generate_all_coarse_grainings()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.CoarseGraining.generate_partition_tuples"><code class="docutils literal notranslate"><span class="pre">generate_partition_tuples()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pymergence.StochasticMatrix">pymergence.StochasticMatrix module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.all_coarse_grainings"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.all_coarse_grainings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.average_necessity"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.average_necessity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.average_sufficiency"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.average_sufficiency()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.coarse_grain"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.coarse_grain()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.coarsest_graining"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.coarsest_graining()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.degeneracy"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.degeneracy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.determinism"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.determinism()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.effective_information"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.effective_information()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.effectiveness"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.effectiveness()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.evolve_distribution"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.evolve_distribution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.find_consistent_coarse_grainings"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.find_consistent_coarse_grainings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.finest_graining"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.finest_graining()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.get_maxent_distribution"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.get_maxent_distribution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.inconsistency_sum_over_starts"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.inconsistency_sum_over_starts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.is_consistent_with"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.is_consistent_with()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.n_states"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.n_states</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.necessity"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.necessity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.plot"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.power"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.power()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.suff_plus_nec"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.suff_plus_nec()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.sufficiency"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.sufficiency()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix.transition_probability"><code class="docutils literal notranslate"><span class="pre">StochasticMatrix.transition_probability()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pymergence.core">pymergence.core module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.core.calc_CP_along_CGs"><code class="docutils literal notranslate"><span class="pre">calc_CP_along_CGs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.core.causal_emergence_single_path"><code class="docutils literal notranslate"><span class="pre">causal_emergence_single_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.core.delta_CP_ancestors"><code class="docutils literal notranslate"><span class="pre">delta_CP_ancestors()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.core.draw_refinement_graph"><code class="docutils literal notranslate"><span class="pre">draw_refinement_graph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.core.find_single_path"><code class="docutils literal notranslate"><span class="pre">find_single_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.core.greedy_path_on_lattice"><code class="docutils literal notranslate"><span class="pre">greedy_path_on_lattice()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.core.min_delta_ancestors"><code class="docutils literal notranslate"><span class="pre">min_delta_ancestors()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.core.refinement_graph"><code class="docutils literal notranslate"><span class="pre">refinement_graph()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pymergence.utils">pymergence.utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.utils.entropy"><code class="docutils literal notranslate"><span class="pre">entropy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.utils.kl_divergence"><code class="docutils literal notranslate"><span class="pre">kl_divergence()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.utils.kl_divergence_base2"><code class="docutils literal notranslate"><span class="pre">kl_divergence_base2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.utils.powerset"><code class="docutils literal notranslate"><span class="pre">powerset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pymergence.utils.str_to_tuplet_partition"><code class="docutils literal notranslate"><span class="pre">str_to_tuplet_partition()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pymergence">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyMergence</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">pymergence package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/pymergence.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pymergence-package">
+<h1>pymergence package<a class="headerlink" href="#pymergence-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-pymergence.CoarseGraining">
+<span id="pymergence-coarsegraining-module"></span><h2>pymergence.CoarseGraining module<a class="headerlink" href="#module-pymergence.CoarseGraining" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pymergence.CoarseGraining.CoarseGraining">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymergence.CoarseGraining.</span></span><span class="sig-name descname"><span class="pre">CoarseGraining</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coarse_graining</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/CoarseGraining.html#CoarseGraining"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.CoarseGraining.CoarseGraining" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to describe coarse-grainings, i.e. partitions of variables.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.CoarseGraining.CoarseGraining.coarse_grain_distribution">
+<span class="sig-name descname"><span class="pre">coarse_grain_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distribution</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/CoarseGraining.html#CoarseGraining.coarse_grain_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.CoarseGraining.CoarseGraining.coarse_grain_distribution" title="Link to this definition"></a></dt>
+<dd><p>Coarse grain a distribution according to this coarse-graining.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>distribution</strong> (<em>np.ndarray</em>) – A 1D array representing the distribution over the original variables.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A 1D array representing the coarse-grained distribution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.CoarseGraining.CoarseGraining.is_refinement_of">
+<span class="sig-name descname"><span class="pre">is_refinement_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/CoarseGraining.html#CoarseGraining.is_refinement_of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.CoarseGraining.CoarseGraining.is_refinement_of" title="Link to this definition"></a></dt>
+<dd><p>Check if this coarse-graining is a refinement of another.</p>
+<p>A coarse-graining A is a refinement of B if every block in A is a subset
+of some block in B.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#pymergence.CoarseGraining.CoarseGraining" title="pymergence.CoarseGraining.CoarseGraining"><em>CoarseGraining</em></a>) – The coarse-graining to check against.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if this coarse-graining is a refinement of the other, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pymergence.CoarseGraining.generate_all_coarse_grainings">
+<span class="sig-prename descclassname"><span class="pre">pymergence.CoarseGraining.</span></span><span class="sig-name descname"><span class="pre">generate_all_coarse_grainings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/CoarseGraining.html#generate_all_coarse_grainings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.CoarseGraining.generate_all_coarse_grainings" title="Link to this definition"></a></dt>
+<dd><p>Generate all possible coarse-grainings of n variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – The number of variables to coarse grain.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of all possible coarse-grainings.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of <a class="reference internal" href="#pymergence.CoarseGraining.CoarseGraining" title="pymergence.CoarseGraining.CoarseGraining">CoarseGraining</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pymergence.CoarseGraining.generate_partition_tuples">
+<span class="sig-prename descclassname"><span class="pre">pymergence.CoarseGraining.</span></span><span class="sig-name descname"><span class="pre">generate_partition_tuples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/CoarseGraining.html#generate_partition_tuples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.CoarseGraining.generate_partition_tuples" title="Link to this definition"></a></dt>
+<dd><p>Generate all partitions of n elements as tuples.</p>
+<p>This recursive function generates all possible partitions of a set of n elements,
+where each partition is represented as a tuple of tuples. Returns a generator
+that yields each partition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> (<em>int</em>) – The number of elements to partition (0 means the empty set).</p></li>
+<li><p><strong>Yields</strong></p></li>
+<li><p><strong>--------</strong></p></li>
+<li><p><strong>tuples</strong> (<em>tuple of</em>) – Each partition is a tuple where each inner tuple represents a block of the partition.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pymergence.StochasticMatrix">
+<span id="pymergence-stochasticmatrix-module"></span><h2>pymergence.StochasticMatrix module<a class="headerlink" href="#module-pymergence.StochasticMatrix" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pymergence.StochasticMatrix.</span></span><span class="sig-name descname"><span class="pre">StochasticMatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for working with (row) stochastic matrices.</p>
+<p>A row stochastic matrix is a square matrix where each row sums to 1 and
+all entries are non-negative, representing transition probabilities
+between states.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.all_coarse_grainings">
+<span class="sig-name descname"><span class="pre">all_coarse_grainings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.all_coarse_grainings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.all_coarse_grainings" title="Link to this definition"></a></dt>
+<dd><p>Generate all possible coarse-grainings of the stochastic matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of all possible coarse-grainings</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of <a class="reference internal" href="#pymergence.CoarseGraining.CoarseGraining" title="pymergence.CoarseGraining.CoarseGraining">CoarseGraining</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.average_necessity">
+<span class="sig-name descname"><span class="pre">average_necessity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intervention_distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.average_necessity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.average_necessity" title="Link to this definition"></a></dt>
+<dd><p>Compute the average necessity of a stochastic matrix under a given intervention distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>intervention_distribution</strong> (<em>array-like</em>) – Probability distribution over rows, i.e. sums to 1.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>avg_necessity</strong> – The average necessity value for the matrix under the given intervention distribution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.average_sufficiency">
+<span class="sig-name descname"><span class="pre">average_sufficiency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intervention_distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.average_sufficiency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.average_sufficiency" title="Link to this definition"></a></dt>
+<dd><p>Compute the average sufficiency of a stochastic matrix under a given intervention distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>intervention_distribution</strong> (<em>array-like</em>) – Probability distribution over rows, i.e. sums to 1.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>avg_sufficiency</strong> – The average sufficiency value for the matrix under the given intervention distribution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.coarse_grain">
+<span class="sig-name descname"><span class="pre">coarse_grain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coarse_graining</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.coarse_grain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.coarse_grain" title="Link to this definition"></a></dt>
+<dd><p>Coarse grain the stochastic matrix according to a given coarse-graining.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>coarse_graining</strong> (<em>CoarseGraining object</em>) – The coarse-graining to apply, which defines how states are grouped</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The coarse-grained stochastic matrix</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix" title="pymergence.StochasticMatrix.StochasticMatrix">StochasticMatrix</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.coarsest_graining">
+<span class="sig-name descname"><span class="pre">coarsest_graining</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.coarsest_graining"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.coarsest_graining" title="Link to this definition"></a></dt>
+<dd><p>Get the coarsest graining of the stochastic matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>CoarseGraining object representing the coarsest graining,
+which groups all states into a single block</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pymergence.CoarseGraining.CoarseGraining" title="pymergence.CoarseGraining.CoarseGraining">CoarseGraining</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.degeneracy">
+<span class="sig-name descname"><span class="pre">degeneracy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intervention_distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.degeneracy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.degeneracy" title="Link to this definition"></a></dt>
+<dd><p>Compute the ‘degeneracy coefficient’ of a row-stochastic matrix
+under a specified intervention distribution.</p>
+<ol class="arabic simple">
+<li><p>Let w = intervention_distribution (length n, sums to 1).</p></li>
+<li><p>Form U^E = sum_i [ w_i * G[i,:] ] (a single distribution in R^n).</p></li>
+<li><p>Compare U^E to the n-dim uniform distribution U = [1/n,…,1/n].</p></li>
+<li><p>The degeneracy coefficient is the normalised inverse entropy of the marginal effect distribution</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>intervention_distribution</strong> (<em>array-like</em>) – Probability distribution over rows, i.e. sums to 1.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>deg_coeff</strong> – The degeneracy coefficient for G under that intervention distribution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.determinism">
+<span class="sig-name descname"><span class="pre">determinism</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intervention_distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.determinism"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.determinism" title="Link to this definition"></a></dt>
+<dd><p>Compute the determinism coefficient of a row-stochastic matrix,
+using the given intervention_distribution as row weights.
+For each row i, compute:</p>
+<blockquote>
+<div><p>det_i = KL( G[i,:] || Uniform(n) ) / log2(n)</p>
+</div></blockquote>
+<p>Then return the weighted average, weighting row i by
+intervention_distribution[i].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>intervention_distribution</strong> (<em>array-like</em>) – Probability distribution over rows, i.e. sums to 1.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>det_coefficient</strong> – The weighted-average determinism coefficient.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.effective_information">
+<span class="sig-name descname"><span class="pre">effective_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intervention_distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.effective_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.effective_information" title="Link to this definition"></a></dt>
+<dd><p>Compute the effective information of a stochastic matrix under a given intervention distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>intervention_distribution</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Probability distribution over rows, i.e. sums to 1.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>effective_information</strong> – The effective information value for the matrix under the given intervention distribution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.effectiveness">
+<span class="sig-name descname"><span class="pre">effectiveness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">intervention_distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.effectiveness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.effectiveness" title="Link to this definition"></a></dt>
+<dd><p>Compute the effectiveness of a stochastic matrix under a given intervention distribution.</p>
+<p>Effectiveness is defined as the determinism coefficient minus the degeneracy coefficient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>intervention_distribution</strong> (<em>array-like</em>) – Probability distribution over rows, i.e. sums to 1.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>effectiveness</strong> – The effectiveness value for the matrix under the given intervention distribution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.evolve_distribution">
+<span class="sig-name descname"><span class="pre">evolve_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_distribution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.evolve_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.evolve_distribution" title="Link to this definition"></a></dt>
+<dd><p>Evolve an initial distribution through the stochastic matrix for a given number of steps.</p>
+<p>Mainly used to verify consistency with a coarse-graining.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initial_distribution</strong> (<em>array-like</em>) – Initial state distribution (must sum to 1)</p></li>
+<li><p><strong>steps</strong> (<em>int</em><em>, </em><em>default=1</em>) – Number of steps to evolve the distribution</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of distributions at each step, including the initial state</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.find_consistent_coarse_grainings">
+<span class="sig-name descname"><span class="pre">find_consistent_coarse_grainings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coarse_grainings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kl_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.find_consistent_coarse_grainings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.find_consistent_coarse_grainings" title="Link to this definition"></a></dt>
+<dd><p>Find coarse-grainings that are consistent with the stochastic matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>coarse_grainings</strong> (<em>list</em><em> of </em><em>CoarseGraining objects</em>) – List of coarse-grainings to check for consistency</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of coarse-grainings that are consistent with the matrix</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of <a class="reference internal" href="#pymergence.CoarseGraining.CoarseGraining" title="pymergence.CoarseGraining.CoarseGraining">CoarseGraining</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.finest_graining">
+<span class="sig-name descname"><span class="pre">finest_graining</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.finest_graining"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.finest_graining" title="Link to this definition"></a></dt>
+<dd><p>Get the finest graining of the stochastic matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>CoarseGraining object representing the finest graining,</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pymergence.CoarseGraining.CoarseGraining" title="pymergence.CoarseGraining.CoarseGraining">CoarseGraining</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.get_maxent_distribution">
+<span class="sig-name descname"><span class="pre">get_maxent_distribution</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.get_maxent_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.get_maxent_distribution" title="Link to this definition"></a></dt>
+<dd><p>Get the maximum entropy distribution for the stochastic matrix.</p>
+<p>The maximum entropy distribution is uniform over the states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Uniform distribution over states</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.inconsistency_sum_over_starts">
+<span class="sig-name descname"><span class="pre">inconsistency_sum_over_starts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coarse_graining</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.inconsistency_sum_over_starts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.inconsistency_sum_over_starts" title="Link to this definition"></a></dt>
+<dd><p>For each node i in the micro chain, start a delta distribution on i,
+and in the macro chain, start a delta on the block containing i.
+Evolve each for ‘steps’ timesteps and measure KL at each step.
+Return the sum of KL divergences across all nodes i.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.is_consistent_with">
+<span class="sig-name descname"><span class="pre">is_consistent_with</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coarse_graining</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kl_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.is_consistent_with"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.is_consistent_with" title="Link to this definition"></a></dt>
+<dd><p>Check if the stochastic matrix is consistent with a given coarse-graining.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.n_states">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_states</span></span><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.n_states" title="Link to this definition"></a></dt>
+<dd><p>Number of states in the Markov chain.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.necessity">
+<span class="sig-name descname"><span class="pre">necessity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cause</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">effect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intervention_distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.necessity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.necessity" title="Link to this definition"></a></dt>
+<dd><p>TODO: check if we should indeed use a uniform prior over all but one state.
+Compute the necessity of a cause for an effect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cause</strong> (<em>int</em>) – Index of the cause state</p></li>
+<li><p><strong>effect</strong> (<em>int</em>) – Index of the effect state</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The necessity value for the cause-effect pair</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot the stochastic matrix as a heatmap.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<em>matplotlib Axes</em><em>, </em><em>optional</em>) – Axes to plot on. If None, creates a new figure and axes.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments for matplotlib’s imshow function</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The axes with the plotted heatmap</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib Axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.power">
+<span class="sig-name descname"><span class="pre">power</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.power"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.power" title="Link to this definition"></a></dt>
+<dd><p>Compute the n-th power of the transition matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> (<em>int</em>) – Power to raise the matrix to</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The n-th power of the matrix</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix" title="pymergence.StochasticMatrix.StochasticMatrix">StochasticMatrix</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.suff_plus_nec">
+<span class="sig-name descname"><span class="pre">suff_plus_nec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intervention_distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.suff_plus_nec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.suff_plus_nec" title="Link to this definition"></a></dt>
+<dd><p>Compute the sum of average sufficiency and average necessity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>intervention_distribution</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Probability distribution over rows, i.e. sums to 1.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The sum of average sufficiency and average necessity values for the matrix</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.sufficiency">
+<span class="sig-name descname"><span class="pre">sufficiency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cause</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">effect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.sufficiency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.sufficiency" title="Link to this definition"></a></dt>
+<dd><p>Compute the sufficiency of a cause for an effect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cause</strong> (<em>int</em>) – Index of the cause state</p></li>
+<li><p><strong>effect</strong> (<em>int</em>) – Index of the effect state</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The sufficiency value for the cause-effect pair</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pymergence.StochasticMatrix.StochasticMatrix.transition_probability">
+<span class="sig-name descname"><span class="pre">transition_probability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/StochasticMatrix.html#StochasticMatrix.transition_probability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.StochasticMatrix.StochasticMatrix.transition_probability" title="Link to this definition"></a></dt>
+<dd><p>Get transition probability from one state to another in given steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>from_state</strong> (<em>int</em>) – Starting state index</p></li>
+<li><p><strong>to_state</strong> (<em>int</em>) – Ending state index</p></li>
+<li><p><strong>steps</strong> (<em>int</em><em>, </em><em>default=1</em>) – Number of steps</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Transition probability</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pymergence.core">
+<span id="pymergence-core-module"></span><h2>pymergence.core module<a class="headerlink" href="#module-pymergence.core" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pymergence.core.calc_CP_along_CGs">
+<span class="sig-prename descclassname"><span class="pre">pymergence.core.</span></span><span class="sig-name descname"><span class="pre">calc_CP_along_CGs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stochastic_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coarse_grainings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'effectiveness'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/core.html#calc_CP_along_CGs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.core.calc_CP_along_CGs" title="Link to this definition"></a></dt>
+<dd><p>Calculate the CP values for a given network, across a range of coarse-grainings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stochastic_matrix</strong> (<a class="reference internal" href="#pymergence.StochasticMatrix.StochasticMatrix" title="pymergence.StochasticMatrix.StochasticMatrix"><em>StochasticMatrix</em></a>) – The stochastic matrix representing the network.</p></li>
+<li><p><strong>coarse_grainings</strong> (<em>list</em><em> of </em><em>CoarseGraining objects</em><em>, </em><em>optional</em>) – List of coarse-graining partitions to consider. If None, all partitions will be generated.</p></li>
+<li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – The mode of calculation for CP values. Default is ‘effectiveness’, alternatively ‘suff_plus_nec’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>all_partitions</strong> (<em>list</em>) – List of CoarseGraining objects representing the partitions.</p></li>
+<li><p><strong>cp_values</strong> (<em>dict</em>) – Dictionary mapping each partition (as a string) to its CP value.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pymergence.core.causal_emergence_single_path">
+<span class="sig-prename descclassname"><span class="pre">pymergence.core.</span></span><span class="sig-name descname"><span class="pre">causal_emergence_single_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stochastic_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'effectiveness'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/core.html#causal_emergence_single_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.core.causal_emergence_single_path" title="Link to this definition"></a></dt>
+<dd><p>Calculate the causal emergence in a stochastic matrix.
+Find the best coarse-graining path with the CE2.0 method, then sum the delta CPs along this path.
+:type stochastic_matrix: 
+:param stochastic_matrix: The stochastic matrix representing the network.
+:type stochastic_matrix: StochasticMatrix
+:type lattice: 
+:param lattice: The lattice of coarse-grainings, ordered by refinement. Possibly filtered by consistency.
+:type lattice: nx.DiGraph
+:type mode: 
+:param mode: The mode of calculation for CP values. Default is ‘effectiveness’, alternatively ‘suff_plus_nec’.
+:type mode: str, optional</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The causal emergence value, which is the sum of delta CP values along the best path.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pymergence.core.delta_CP_ancestors">
+<span class="sig-prename descclassname"><span class="pre">pymergence.core.</span></span><span class="sig-name descname"><span class="pre">delta_CP_ancestors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cp_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allAncestors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/core.html#delta_CP_ancestors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.core.delta_CP_ancestors" title="Link to this definition"></a></dt>
+<dd><p>Calculate the minimum difference between the CP value of a coarse-graining
+and its ancestors in the lattice, across all coarse-grainings.</p>
+<p>TODO: this could be sped up and made networkx independent by using the adjacency matrix of the lattice</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lattice</strong> (<em>nx.DiGraph</em>) – The lattice of coarse-grainings, ordered by refinement.</p></li>
+<li><p><strong>cp_dict</strong> (<em>dict</em>) – Dictionary mapping each partition to its CP value.</p></li>
+<li><p><strong>allAncestors</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, calculate min difference with the max across ancestors in the lattice. If False, only consider direct ancestors.
+Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The minimum difference between the CP value of the coarse-graining and its direct ancestors.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pymergence.core.draw_refinement_graph">
+<span class="sig-prename descclassname"><span class="pre">pymergence.core.</span></span><span class="sig-name descname"><span class="pre">draw_refinement_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hasse_graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Refinement</span> <span class="pre">Graph'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/core.html#draw_refinement_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.core.draw_refinement_graph" title="Link to this definition"></a></dt>
+<dd><p>Draw the refinement graph with nodes colored by the value_dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hasse_graph</strong> (<em>networkx.DiGraph</em>) – Directed graph representing the Hasse diagram of the partitions.</p></li>
+<li><p><strong>value_dict</strong> (<em>dict</em>) – Dictionary mapping each partition to its value.</p></li>
+<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) – Title of the plot. Default is “Refinement Graph”.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pymergence.core.find_single_path">
+<span class="sig-prename descclassname"><span class="pre">pymergence.core.</span></span><span class="sig-name descname"><span class="pre">find_single_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CP_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_partition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_partition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">demand_nonzero_delta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/core.html#find_single_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.core.find_single_path" title="Link to this definition"></a></dt>
+<dd><p>Find a single path on the lattice of coarse-grainings with the method from the CE2.0 paper.
+steps:
+1. Start from the finest partition to the <em>best</em> (highest CP) coarsest partition with more than 1 block.
+2. Find all paths on this lattice with nonnegative delta CP values.
+2. Pick the longest path. (when tied: just pick the first one).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lattice</strong> (<em>nx.DiGraph</em>) – The lattice of coarse-grainings, ordered by refinement. Possibly filtered by consistency.</p></li>
+<li><p><strong>CP_values</strong> (<em>dict</em>) – Dictionary mapping each partition to its CP value.</p></li>
+<li><p><strong>start_partition</strong> (<em>tuple</em><em>, </em><em>optional</em>) – The starting partition for the path. If None, starts from the finest partition.</p></li>
+<li><p><strong>end_partition</strong> (<em>tuple</em><em>, </em><em>optional</em>) – The ending partition for the path. If None, ends at the coarsest partition with more than 1 block.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of tuples (partition, CP value, delta CP) representing the partitions, CP values, and delta CP values along the path.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list [(<a class="reference internal" href="#pymergence.CoarseGraining.CoarseGraining" title="pymergence.CoarseGraining.CoarseGraining">CoarseGraining</a>, float, float)]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pymergence.core.greedy_path_on_lattice">
+<span class="sig-prename descclassname"><span class="pre">pymergence.core.</span></span><span class="sig-name descname"><span class="pre">greedy_path_on_lattice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CP_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_partition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_partition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/core.html#greedy_path_on_lattice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.core.greedy_path_on_lattice" title="Link to this definition"></a></dt>
+<dd><p>Find a greedy path on the lattice of coarse-grainings based on CP values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lattice</strong> (<em>nx.DiGraph</em>) – The lattice of coarse-grainings, ordered by refinement.</p></li>
+<li><p><strong>CP_values</strong> (<em>dict</em>) – Dictionary mapping each partition to its CP value.</p></li>
+<li><p><strong>start_partition</strong> (<em>tuple</em><em>, </em><em>optional</em>) – The starting partition for the path. If None, starts from the finest partition</p></li>
+<li><p><strong>end_partition</strong> (<em>tuple</em><em>, </em><em>optional</em>) – The ending partition for the path. If None, ends at the coarsest partition</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of tuples (partition, CP value) representing the partitions and CP values along the greedy path.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list [(<a class="reference internal" href="#pymergence.CoarseGraining.CoarseGraining" title="pymergence.CoarseGraining.CoarseGraining">CoarseGraining</a>, float)]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pymergence.core.min_delta_ancestors">
+<span class="sig-prename descclassname"><span class="pre">pymergence.core.</span></span><span class="sig-name descname"><span class="pre">min_delta_ancestors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coarse_graining</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lattice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cp_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allAncestors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/core.html#min_delta_ancestors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.core.min_delta_ancestors" title="Link to this definition"></a></dt>
+<dd><p>NOTE: this function will probably be removed in the future. Better to use <cite>delta_CP_ancestors</cite> directly.
+Calculate the minimum difference between the CP value of a coarse-graining and its direct ancestors in the lattice.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coarse_graining</strong> (<a class="reference internal" href="#pymergence.CoarseGraining.CoarseGraining" title="pymergence.CoarseGraining.CoarseGraining"><em>CoarseGraining</em></a>) – The coarse-graining for which to calculate the minimum difference.</p></li>
+<li><p><strong>lattice</strong> (<em>nx.DiGraph</em>) – The lattice of coarse-grainings, ordered by refinement.</p></li>
+<li><p><strong>cp_dict</strong> (<em>dict</em>) – Dictionary mapping each partition to its CP value.</p></li>
+<li><p><strong>allAncestors</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, consider all ancestors in the lattice. If False, only consider direct ancestors.
+Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The minimum difference between the CP value of the coarse-graining and its direct ancestors.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pymergence.core.refinement_graph">
+<span class="sig-prename descclassname"><span class="pre">pymergence.core.</span></span><span class="sig-name descname"><span class="pre">refinement_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coarse_grainings</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/core.html#refinement_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.core.refinement_graph" title="Link to this definition"></a></dt>
+<dd><p>Create a Hasse diagram for the given partitions under refinement
+:type coarse_grainings: 
+:param coarse_grainings: List of partitions, where each partition is a tuple of sets.
+:type coarse_grainings: list of CoarseGraining objects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hasse_graph</strong> – Directed graph representing the Hasse diagram of the partitions.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>networkx.DiGraph</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pymergence.utils">
+<span id="pymergence-utils-module"></span><h2>pymergence.utils module<a class="headerlink" href="#module-pymergence.utils" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="pymergence.utils.entropy">
+<span class="sig-prename descclassname"><span class="pre">pymergence.utils.</span></span><span class="sig-name descname"><span class="pre">entropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/utils.html#entropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.utils.entropy" title="Link to this definition"></a></dt>
+<dd><p>Compute the Shannon entropy H(p).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pymergence.utils.kl_divergence">
+<span class="sig-prename descclassname"><span class="pre">pymergence.utils.</span></span><span class="sig-name descname"><span class="pre">kl_divergence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/utils.html#kl_divergence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.utils.kl_divergence" title="Link to this definition"></a></dt>
+<dd><p>Compute Kullback-Leibler divergence D_KL(p || q).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pymergence.utils.kl_divergence_base2">
+<span class="sig-prename descclassname"><span class="pre">pymergence.utils.</span></span><span class="sig-name descname"><span class="pre">kl_divergence_base2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/utils.html#kl_divergence_base2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.utils.kl_divergence_base2" title="Link to this definition"></a></dt>
+<dd><p>Compute Kullback-Leibler divergence D_KL(p || q) with base 2.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pymergence.utils.powerset">
+<span class="sig-prename descclassname"><span class="pre">pymergence.utils.</span></span><span class="sig-name descname"><span class="pre">powerset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/utils.html#powerset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.utils.powerset" title="Link to this definition"></a></dt>
+<dd><p>Return the power set of an iterable.
+powerset([1,2,3]) –&gt; () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pymergence.utils.str_to_tuplet_partition">
+<span class="sig-prename descclassname"><span class="pre">pymergence.utils.</span></span><span class="sig-name descname"><span class="pre">str_to_tuplet_partition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pymergence/utils.html#str_to_tuplet_partition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pymergence.utils.str_to_tuplet_partition" title="Link to this definition"></a></dt>
+<dd><p>Converts a pipe-separated string of numbers into a nested tuple of digits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_string</strong> – A string like ‘0|1|234|5|67’.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A nested tuple like ((0,), (1,), (2, 3, 4), (5,), (6, 7)).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pymergence">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pymergence" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="PyMergence documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, PlaceholderName.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

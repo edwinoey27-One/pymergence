@@ -1,0 +1,507 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pymergence.core &mdash; PyMergence 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PyMergence
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">direct links:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pymergence.html">pymergence package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PyMergence</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pymergence.core</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pymergence.core</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pymergence.utils</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pymergence.StochasticMatrix</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pymergence.CoarseGraining</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+
+<div class="viewcode-block" id="calc_CP_along_CGs">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.core.calc_CP_along_CGs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_CP_along_CGs</span><span class="p">(</span><span class="n">stochastic_matrix</span><span class="p">,</span> <span class="n">coarse_grainings</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;effectiveness&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the CP values for a given network, across a range of coarse-grainings.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    stochastic_matrix : StochasticMatrix</span>
+<span class="sd">        The stochastic matrix representing the network.</span>
+<span class="sd">    coarse_grainings : list of CoarseGraining objects, optional</span>
+<span class="sd">        List of coarse-graining partitions to consider. If None, all partitions will be generated.</span>
+<span class="sd">    mode : str, optional</span>
+<span class="sd">        The mode of calculation for CP values. Default is &#39;effectiveness&#39;, alternatively &#39;suff_plus_nec&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    all_partitions : list</span>
+<span class="sd">        List of CoarseGraining objects representing the partitions.</span>
+<span class="sd">    cp_values : dict</span>
+<span class="sd">        Dictionary mapping each partition (as a string) to its CP value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">coarse_grained_matrices</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">considered_coarse_grainings</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">coarse_grainings</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">cg</span> <span class="ow">in</span> <span class="n">coarse_grainings</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cg</span><span class="p">,</span> <span class="n">CoarseGraining</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Partitions must be instances of CoarseGraining.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cg</span><span class="o">.</span><span class="n">partition</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">coarse_grained_matrices</span><span class="p">:</span>
+                <span class="n">cg_matrix</span> <span class="o">=</span> <span class="n">stochastic_matrix</span><span class="o">.</span><span class="n">coarse_grain</span><span class="p">(</span><span class="n">cg</span><span class="p">)</span>
+                <span class="n">coarse_grained_matrices</span><span class="p">[</span><span class="n">cg</span><span class="o">.</span><span class="n">partition</span><span class="p">]</span> <span class="o">=</span> <span class="n">cg_matrix</span>    <span class="c1"># Use partition tuple as key</span>
+                <span class="n">considered_coarse_grainings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cg</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">cg</span> <span class="ow">in</span> <span class="n">generate_all_coarse_grainings</span><span class="p">(</span><span class="n">stochastic_matrix</span><span class="o">.</span><span class="n">n_states</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">cg</span><span class="o">.</span><span class="n">partition</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">coarse_grained_matrices</span><span class="p">:</span>
+                <span class="n">cg_matrix</span> <span class="o">=</span> <span class="n">stochastic_matrix</span><span class="o">.</span><span class="n">coarse_grain</span><span class="p">(</span><span class="n">cg</span><span class="p">)</span>
+                <span class="n">coarse_grained_matrices</span><span class="p">[</span><span class="n">cg</span><span class="o">.</span><span class="n">partition</span><span class="p">]</span> <span class="o">=</span> <span class="n">cg_matrix</span>    <span class="c1"># Use partition tuple as key</span>
+                <span class="n">considered_coarse_grainings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cg</span><span class="p">)</span>
+
+    <span class="c1"># Compute the ded_combined_normalized for each partition</span>
+    <span class="n">cp_values</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">cg</span> <span class="ow">in</span> <span class="n">considered_coarse_grainings</span><span class="p">:</span>
+        <span class="n">cg_matrix</span> <span class="o">=</span> <span class="n">coarse_grained_matrices</span><span class="p">[</span><span class="n">cg</span><span class="o">.</span><span class="n">partition</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;suff_plus_nec&#39;</span><span class="p">:</span>
+            <span class="n">cp_values</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">cg</span><span class="p">)]</span> <span class="o">=</span> <span class="n">cg_matrix</span><span class="o">.</span><span class="n">suff_plus_nec</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;effectiveness&#39;</span><span class="p">:</span>
+            <span class="n">cp_values</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">cg</span><span class="p">)]</span> <span class="o">=</span> <span class="n">cg_matrix</span><span class="o">.</span><span class="n">effectiveness</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid mode. Use &#39;suff_plus_nec&#39; or &#39;effectiveness&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cp_values</span><span class="p">,</span> <span class="n">considered_coarse_grainings</span></div>
+
+
+<div class="viewcode-block" id="min_delta_ancestors">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.core.min_delta_ancestors">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">min_delta_ancestors</span><span class="p">(</span><span class="n">coarse_graining</span><span class="p">,</span> <span class="n">lattice</span><span class="p">,</span> <span class="n">cp_dict</span><span class="p">,</span> <span class="n">allAncestors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    NOTE: this function will probably be removed in the future. Better to use `delta_CP_ancestors` directly.</span>
+<span class="sd">    Calculate the minimum difference between the CP value of a coarse-graining and its direct ancestors in the lattice.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coarse_graining : CoarseGraining</span>
+<span class="sd">        The coarse-graining for which to calculate the minimum difference.</span>
+<span class="sd">    lattice : nx.DiGraph</span>
+<span class="sd">        The lattice of coarse-grainings, ordered by refinement.</span>
+<span class="sd">    cp_dict : dict</span>
+<span class="sd">        Dictionary mapping each partition to its CP value.</span>
+<span class="sd">    allAncestors : bool, optional</span>
+<span class="sd">        If True, consider all ancestors in the lattice. If False, only consider direct ancestors.</span>
+<span class="sd">        Default is False.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The minimum difference between the CP value of the coarse-graining and its direct ancestors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coarse_graining</span><span class="p">,</span> <span class="n">CoarseGraining</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;coarse_graining must be an instance of CoarseGraining.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;lattice must be an instance of nx.DiGraph.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cp_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;cp_dict must be a dictionary.&quot;</span><span class="p">)</span>
+
+
+    <span class="n">partition_val</span> <span class="o">=</span> <span class="n">cp_dict</span><span class="p">[</span><span class="n">coarse_graining</span><span class="o">.</span><span class="n">partition</span><span class="p">]</span>
+
+    <span class="c1"># We need ID of the partition to query for predecessors</span>
+    <span class="n">partition_ID</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">node_ID</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">lattice</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">node</span><span class="p">[</span><span class="s1">&#39;partition&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">coarse_graining</span><span class="o">.</span><span class="n">partition</span><span class="p">:</span>
+            <span class="n">partition_ID</span> <span class="o">=</span> <span class="n">node_ID</span>
+            <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">partition_ID</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Coarse graining not found in the lattice.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">allAncestors</span><span class="p">:</span>
+        <span class="n">ancestors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">ancestors</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">partition_ID</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ancestors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">lattice</span><span class="o">.</span><span class="n">predecessors</span><span class="p">(</span><span class="n">partition_ID</span><span class="p">))</span>
+
+    <span class="n">ancestor_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp_dict</span><span class="p">[</span><span class="n">lattice</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">anc</span><span class="p">][</span><span class="s1">&#39;partition&#39;</span><span class="p">]]</span> <span class="k">for</span> <span class="n">anc</span> <span class="ow">in</span> <span class="n">ancestors</span><span class="p">]</span>
+    <span class="n">minDiff</span> <span class="o">=</span> <span class="n">partition_val</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="n">ancestor_vals</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">minDiff</span></div>
+
+
+<div class="viewcode-block" id="delta_CP_ancestors">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.core.delta_CP_ancestors">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">delta_CP_ancestors</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">cp_dict</span><span class="p">,</span> <span class="n">allAncestors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the minimum difference between the CP value of a coarse-graining </span>
+<span class="sd">    and its ancestors in the lattice, across all coarse-grainings.</span>
+
+<span class="sd">    TODO: this could be sped up and made networkx independent by using the adjacency matrix of the lattice</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lattice : nx.DiGraph</span>
+<span class="sd">        The lattice of coarse-grainings, ordered by refinement.</span>
+<span class="sd">    cp_dict : dict</span>
+<span class="sd">        Dictionary mapping each partition to its CP value.</span>
+<span class="sd">    allAncestors : bool, optional</span>
+<span class="sd">        If True, calculate min difference with the max across ancestors in the lattice. If False, only consider direct ancestors.</span>
+<span class="sd">        Default is False.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The minimum difference between the CP value of the coarse-graining and its direct ancestors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;lattice must be an instance of nx.DiGraph.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cp_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;cp_dict must be a dictionary.&quot;</span><span class="p">)</span>
+
+    <span class="n">delta_cp_values</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">for</span> <span class="n">node_ID</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">lattice</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">partition_val</span> <span class="o">=</span> <span class="n">cp_dict</span><span class="p">[</span><span class="n">node_ID</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">allAncestors</span><span class="p">:</span>
+            <span class="n">ancestors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">ancestors</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">node_ID</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ancestors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">lattice</span><span class="o">.</span><span class="n">predecessors</span><span class="p">(</span><span class="n">node_ID</span><span class="p">))</span>
+
+        <span class="n">ancestor_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp_dict</span><span class="p">[</span><span class="n">anc</span><span class="p">]</span> <span class="k">for</span> <span class="n">anc</span> <span class="ow">in</span> <span class="n">ancestors</span><span class="p">]</span>
+        <span class="n">minDiff</span> <span class="o">=</span> <span class="n">partition_val</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="n">ancestor_vals</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">delta_cp_values</span><span class="p">[</span><span class="n">node</span><span class="p">[</span><span class="s1">&#39;partition&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">minDiff</span>
+
+    <span class="k">return</span> <span class="n">delta_cp_values</span></div>
+
+
+<div class="viewcode-block" id="greedy_path_on_lattice">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.core.greedy_path_on_lattice">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">greedy_path_on_lattice</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">CP_values</span><span class="p">,</span> <span class="n">start_partition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_partition</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find a greedy path on the lattice of coarse-grainings based on CP values.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lattice : nx.DiGraph</span>
+<span class="sd">        The lattice of coarse-grainings, ordered by refinement.</span>
+<span class="sd">    CP_values : dict</span>
+<span class="sd">        Dictionary mapping each partition to its CP value.</span>
+<span class="sd">    start_partition : tuple, optional</span>
+<span class="sd">        The starting partition for the path. If None, starts from the finest partition</span>
+<span class="sd">    end_partition : tuple, optional</span>
+<span class="sd">        The ending partition for the path. If None, ends at the coarsest partition</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list [(CoarseGraining, float)]</span>
+<span class="sd">        A list of tuples (partition, CP value) representing the partitions and CP values along the greedy path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;lattice must be an instance of nx.DiGraph.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">CP_values</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;CP_values must be a dictionary.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">start_partition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Start from the finest partition</span>
+        <span class="n">start_partition</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lattice</span><span class="o">.</span><span class="n">nodes</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">end_partition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># End at the coarsest partition</span>
+        <span class="n">end_partition</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">lattice</span><span class="o">.</span><span class="n">nodes</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">))</span>
+
+    <span class="n">current_partition</span> <span class="o">=</span> <span class="n">start_partition</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="p">[(</span><span class="n">current_partition</span><span class="p">,</span> <span class="n">CP_values</span><span class="p">[</span><span class="n">current_partition</span><span class="p">])]</span>
+    
+    <span class="k">while</span> <span class="n">current_partition</span> <span class="o">!=</span> <span class="n">end_partition</span><span class="p">:</span>
+        <span class="n">neighbors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">lattice</span><span class="o">.</span><span class="n">successors</span><span class="p">(</span><span class="n">current_partition</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">neighbors</span><span class="p">:</span>
+            <span class="k">break</span>  <span class="c1"># No more neighbors to explore</span>
+
+        <span class="n">next_partition</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">neighbors</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">CP_values</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+        <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">next_partition</span><span class="p">,</span> <span class="n">CP_values</span><span class="p">[</span><span class="n">next_partition</span><span class="p">]))</span>
+        <span class="n">current_partition</span> <span class="o">=</span> <span class="n">next_partition</span>
+
+    <span class="k">return</span> <span class="n">path</span></div>
+
+    
+<div class="viewcode-block" id="find_single_path">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.core.find_single_path">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_single_path</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">CP_values</span><span class="p">,</span> <span class="n">start_partition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_partition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">demand_nonzero_delta</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find a single path on the lattice of coarse-grainings with the method from the CE2.0 paper. </span>
+<span class="sd">    steps:</span>
+<span class="sd">    1. Start from the finest partition to the *best* (highest CP) coarsest partition with more than 1 block. </span>
+<span class="sd">    2. Find all paths on this lattice with nonnegative delta CP values.</span>
+<span class="sd">    2. Pick the longest path. (when tied: just pick the first one). </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lattice : nx.DiGraph</span>
+<span class="sd">        The lattice of coarse-grainings, ordered by refinement. Possibly filtered by consistency.</span>
+<span class="sd">    CP_values : dict</span>
+<span class="sd">        Dictionary mapping each partition to its CP value.</span>
+<span class="sd">    start_partition : tuple, optional</span>
+<span class="sd">        The starting partition for the path. If None, starts from the finest partition.</span>
+<span class="sd">    end_partition : tuple, optional</span>
+<span class="sd">        The ending partition for the path. If None, ends at the coarsest partition with more than 1 block.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list [(CoarseGraining, float, float)]</span>
+<span class="sd">        A list of tuples (partition, CP value, delta CP) representing the partitions, CP values, and delta CP values along the path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;lattice must be an instance of nx.DiGraph.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">CP_values</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;CP_values must be a dictionary.&quot;</span><span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="n">start_partition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Start from the finest partition</span>
+        <span class="n">start_partition</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lattice</span><span class="o">.</span><span class="n">nodes</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">end_partition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># End at the best partition with n - 1 blocks</span>
+        <span class="n">end_partition</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span> <span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">lattice</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span> <span class="k">if</span> <span class="n">lattice</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;label&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">CP_values</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+
+    <span class="n">valid_paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">all_simple_paths</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">start_partition</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">end_partition</span><span class="p">):</span>
+        <span class="c1"># Check if the path has nonnegative delta CP values</span>
+        <span class="n">valid_path</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">demand_nonzero_delta</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">current_partition</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">next_partition</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">delta_cp</span> <span class="o">=</span> <span class="n">CP_values</span><span class="p">[</span><span class="n">next_partition</span><span class="p">]</span> <span class="o">-</span> <span class="n">CP_values</span><span class="p">[</span><span class="n">current_partition</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">delta_cp</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">valid_path</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">break</span>
+        
+        <span class="k">if</span> <span class="n">valid_path</span><span class="p">:</span>
+            <span class="n">valid_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No valid path found with nonnegative delta CP values.&quot;</span><span class="p">)</span>
+    <span class="c1"># Take the longest path (first one in case of ties)</span>
+    <span class="n">valid_paths</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">valid_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">path_values</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)):</span>
+        <span class="n">current_partition</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">cp_value</span> <span class="o">=</span> <span class="n">CP_values</span><span class="p">[</span><span class="n">current_partition</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">delta_cp</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># No delta CP for the first partition</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">delta_cp</span> <span class="o">=</span> <span class="n">CP_values</span><span class="p">[</span><span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">-</span> <span class="n">CP_values</span><span class="p">[</span><span class="n">path</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]]</span>
+        <span class="n">path_values</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">current_partition</span><span class="p">,</span> <span class="n">cp_value</span><span class="p">,</span> <span class="n">delta_cp</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">path_values</span></div>
+
+
+<div class="viewcode-block" id="causal_emergence_single_path">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.core.causal_emergence_single_path">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">causal_emergence_single_path</span><span class="p">(</span><span class="n">stochastic_matrix</span><span class="p">,</span> <span class="n">lattice</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;effectiveness&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the causal emergence in a stochastic matrix. </span>
+<span class="sd">    Find the best coarse-graining path with the CE2.0 method, then sum the delta CPs along this path. </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    stochastic_matrix : StochasticMatrix</span>
+<span class="sd">        The stochastic matrix representing the network.</span>
+<span class="sd">    lattice : nx.DiGraph</span>
+<span class="sd">        The lattice of coarse-grainings, ordered by refinement. Possibly filtered by consistency.</span>
+<span class="sd">    mode : str, optional</span>
+<span class="sd">        The mode of calculation for CP values. Default is &#39;effectiveness&#39;, alternatively &#39;suff_plus_nec&#39;.   </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The causal emergence value, which is the sum of delta CP values along the best path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stochastic_matrix</span><span class="p">,</span> <span class="n">StochasticMatrix</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;stochastic_matrix must be an instance of StochasticMatrix.&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;lattice must be an instance of nx.DiGraph.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;effectiveness&#39;</span><span class="p">,</span> <span class="s1">&#39;suff_plus_nec&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid mode. Use &#39;effectiveness&#39; or &#39;suff_plus_nec&#39;.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Calculate CP values for the lattice</span>
+    <span class="n">cp_values</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">calc_CP_along_CGs</span><span class="p">(</span><span class="n">stochastic_matrix</span><span class="p">,</span> <span class="n">coarse_grainings</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+    <span class="c1"># Find the best path on the lattice</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">find_single_path</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">cp_values</span><span class="p">,</span> <span class="n">start_partition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_partition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">demand_nonzero_delta</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># Calculate the causal emergence value as the sum of delta CP values along the path</span>
+    <span class="n">causal_emergence_value</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">delta_cp</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">delta_cp</span> <span class="ow">in</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">causal_emergence_value</span><span class="p">,</span> <span class="n">path</span></div>
+
+    
+<div class="viewcode-block" id="refinement_graph">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.core.refinement_graph">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">refinement_graph</span><span class="p">(</span><span class="n">coarse_grainings</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a Hasse diagram for the given partitions under refinement</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    coarse_grainings : list of CoarseGraining objects</span>
+<span class="sd">        List of partitions, where each partition is a tuple of sets.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    hasse_graph : networkx.DiGraph</span>
+<span class="sd">        Directed graph representing the Hasse diagram of the partitions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">incidence_graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+    <span class="c1"># Sort partitions by number of blocks (descending) to help with layout</span>
+    <span class="n">coarse_grainings</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">coarse_grainings</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">n_blocks</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="c1"># Add nodes. Node IDs need to be strings for networkx compatibility</span>
+    <span class="k">for</span> <span class="n">cg</span> <span class="ow">in</span> <span class="n">coarse_grainings</span><span class="p">:</span>
+        <span class="n">incidence_graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cg</span><span class="p">),</span> <span class="n">partition</span><span class="o">=</span><span class="n">cg</span><span class="o">.</span><span class="n">partition</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">cg</span><span class="p">))</span>
+    
+    <span class="c1"># Add edges based on refinement relation</span>
+    <span class="k">for</span> <span class="n">cg1</span> <span class="ow">in</span> <span class="n">coarse_grainings</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">cg2</span> <span class="ow">in</span> <span class="n">coarse_grainings</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">cg1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">(</span><span class="n">cg2</span><span class="p">)</span> <span class="ow">and</span> <span class="n">cg1</span><span class="o">.</span><span class="n">is_refinement_of</span><span class="p">(</span><span class="n">cg2</span><span class="p">):</span>
+                <span class="n">incidence_graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cg1</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">cg2</span><span class="p">))</span>
+    <span class="n">hasse_graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">transitive_reduction</span><span class="p">(</span><span class="n">incidence_graph</span><span class="p">)</span>
+    
+    <span class="c1"># Copy node attributes (transitive_reduction doesn&#39;t preserve them)</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">hasse_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+        <span class="n">hasse_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">incidence_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">node</span><span class="p">])</span>
+    
+    <span class="k">return</span> <span class="n">hasse_graph</span></div>
+
+
+<div class="viewcode-block" id="draw_refinement_graph">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.core.draw_refinement_graph">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">draw_refinement_graph</span><span class="p">(</span><span class="n">hasse_graph</span><span class="p">,</span> <span class="n">value_dict</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Refinement Graph&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Draw the refinement graph with nodes colored by the value_dict.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hasse_graph : networkx.DiGraph</span>
+<span class="sd">        Directed graph representing the Hasse diagram of the partitions.</span>
+<span class="sd">    value_dict : dict</span>
+<span class="sd">        Dictionary mapping each partition to its value.</span>
+<span class="sd">    title : str, optional</span>
+<span class="sd">        Title of the plot. Default is &quot;Refinement Graph&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="kn">import</span> <span class="n">Normalize</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.cm</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cm</span>
+
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+    <span class="c1"># Get node values for coloring</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">value_dict</span><span class="p">[</span><span class="n">hasse_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">&#39;partition&#39;</span><span class="p">]]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">hasse_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">()]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=-</span><span class="nb">max</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">+</span><span class="mf">0.05</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># Fallback if all values are the same</span>
+    <span class="c1"># Define a colormap: blue for low values to red for high values</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">coolwarm</span>
+    <span class="c1"># Draw the graph</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">nx_agraph</span><span class="o">.</span><span class="n">graphviz_layout</span><span class="p">(</span><span class="n">hasse_graph</span><span class="p">,</span> <span class="n">prog</span><span class="o">=</span><span class="s1">&#39;dot&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="s1">&#39;-Grankdir=BT&#39;</span><span class="p">)</span> <span class="c1"># Is this better?</span>
+
+    <span class="c1"># nx.draw(hasse_graph, pos, ax=ax, with_labels=True, node_color=values, cmap=cmap,</span>
+    <span class="c1">#         node_size=500, font_size=10, font_color=&#39;black&#39;, edge_color=&#39;gray&#39;, label=True)</span>
+    
+    <span class="n">node_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmap</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">value_dict</span><span class="p">[</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]]))</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">get_node_attributes</span><span class="p">(</span><span class="n">hasse_graph</span><span class="p">,</span> <span class="s1">&#39;partition&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_nodes</span><span class="p">(</span><span class="n">hasse_graph</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">node_color</span><span class="o">=</span><span class="n">node_colors</span><span class="p">,</span> <span class="n">node_size</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    
+    <span class="c1"># Draw edges</span>
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_edges</span><span class="p">(</span><span class="n">hasse_graph</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">edge_color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">arrows</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">arrowsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    
+    <span class="c1"># Draw labels</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">hasse_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">hasse_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">()}</span>
+    <span class="n">nx</span><span class="o">.</span><span class="n">draw_networkx_labels</span><span class="p">(</span><span class="n">hasse_graph</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">font_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+
+    <span class="n">sm</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+    <span class="n">sm</span><span class="o">.</span><span class="n">set_array</span><span class="p">([])</span>
+    <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sm</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+    <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;Values&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">ax</span>   </div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, PlaceholderName.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

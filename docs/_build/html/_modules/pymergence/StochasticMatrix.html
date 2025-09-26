@@ -1,0 +1,776 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pymergence.StochasticMatrix &mdash; PyMergence 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PyMergence
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">direct links:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pymergence.html">pymergence package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PyMergence</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pymergence.StochasticMatrix</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pymergence.StochasticMatrix</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pymergence.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">kl_divergence</span><span class="p">,</span> <span class="n">kl_divergence_base2</span><span class="p">,</span> <span class="n">entropy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pymergence.CoarseGraining</span><span class="w"> </span><span class="kn">import</span> <span class="n">CoarseGraining</span><span class="p">,</span> <span class="n">generate_all_coarse_grainings</span>
+
+<div class="viewcode-block" id="StochasticMatrix">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StochasticMatrix</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for working with (row) stochastic matrices.</span>
+<span class="sd">    </span>
+<span class="sd">    A row stochastic matrix is a square matrix where each row sums to 1 and</span>
+<span class="sd">    all entries are non-negative, representing transition probabilities</span>
+<span class="sd">    between states.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize a stochastic matrix.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        matrix : array-like</span>
+<span class="sd">            Square matrix with non-negative entries where rows sum to 1</span>
+<span class="sd">        validate : bool, default=True</span>
+<span class="sd">            Whether to validate that the matrix is stochastic</span>
+<span class="sd">        tolerance : float, default=1e-10</span>
+<span class="sd">            Numerical tolerance for validation checks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span> <span class="o">=</span> <span class="n">tolerance</span>
+        
+        <span class="k">if</span> <span class="n">validate</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_validate_stochastic</span><span class="p">()</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_stochastic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that the matrix is stochastic.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Matrix must be 2-dimensional&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Matrix must be square&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Check non-negative entries</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix</span> <span class="o">&lt;</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All matrix entries must be non-negative&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Check row sums</span>
+        <span class="n">row_sums</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">row_sums</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Each row must sum to 1 (stochastic property)&quot;</span><span class="p">)</span>
+    
+        <span class="k">return</span> <span class="kc">True</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_states</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of states in the Markov chain.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+    
+<div class="viewcode-block" id="StochasticMatrix.power">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.power">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the n-th power of the transition matrix.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        n : int</span>
+<span class="sd">            Power to raise the matrix to</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        StochasticMatrix</span>
+<span class="sd">            The n-th power of the matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Power must be non-negative&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">StochasticMatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">),</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_power</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">StochasticMatrix</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+    
+<div class="viewcode-block" id="StochasticMatrix.transition_probability">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.transition_probability">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transition_probability</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_state</span><span class="p">,</span> <span class="n">to_state</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get transition probability from one state to another in given steps.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        from_state : int</span>
+<span class="sd">            Starting state index</span>
+<span class="sd">        to_state : int</span>
+<span class="sd">            Ending state index</span>
+<span class="sd">        steps : int, default=1</span>
+<span class="sd">            Number of steps</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        float</span>
+<span class="sd">            Transition probability</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">steps</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">[</span><span class="n">from_state</span><span class="p">,</span> <span class="n">to_state</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">power_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">power_matrix</span><span class="o">.</span><span class="n">matrix</span><span class="p">[</span><span class="n">from_state</span><span class="p">,</span> <span class="n">to_state</span><span class="p">]</span></div>
+
+    
+<div class="viewcode-block" id="StochasticMatrix.get_maxent_distribution">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.get_maxent_distribution">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_maxent_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the maximum entropy distribution for the stochastic matrix.</span>
+<span class="sd">        </span>
+<span class="sd">        The maximum entropy distribution is uniform over the states.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            Uniform distribution over states</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span></div>
+
+    
+<div class="viewcode-block" id="StochasticMatrix.all_coarse_grainings">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.all_coarse_grainings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">all_coarse_grainings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate all possible coarse-grainings of the stochastic matrix.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        list of CoarseGraining</span>
+<span class="sd">            List of all possible coarse-grainings</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">generate_all_coarse_grainings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StochasticMatrix.finest_graining">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.finest_graining">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">finest_graining</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the finest graining of the stochastic matrix.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        CoarseGraining</span>
+<span class="sd">            CoarseGraining object representing the finest graining,</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">partition</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">((</span><span class="n">i</span><span class="p">,)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">CoarseGraining</span><span class="p">(</span><span class="n">partition</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="StochasticMatrix.coarsest_graining">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.coarsest_graining">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coarsest_graining</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the coarsest graining of the stochastic matrix.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        CoarseGraining</span>
+<span class="sd">            CoarseGraining object representing the coarsest graining,</span>
+<span class="sd">            which groups all states into a single block</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">partition</span> <span class="o">=</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">)),)</span>
+        <span class="k">return</span> <span class="n">CoarseGraining</span><span class="p">(</span><span class="n">partition</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="StochasticMatrix.coarse_grain">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.coarse_grain">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">coarse_grain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coarse_graining</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Coarse grain the stochastic matrix according to a given coarse-graining.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        coarse_graining : CoarseGraining object</span>
+<span class="sd">            The coarse-graining to apply, which defines how states are grouped</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        StochasticMatrix</span>
+<span class="sd">            The coarse-grained stochastic matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coarse_graining</span><span class="p">,</span> <span class="n">CoarseGraining</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;coarse_graining must be an instance of CoarseGraining&quot;</span><span class="p">)</span>
+        
+        <span class="n">n_blocks</span> <span class="o">=</span> <span class="n">coarse_graining</span><span class="o">.</span><span class="n">n_blocks</span>
+        <span class="n">coarse_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_blocks</span><span class="p">,</span> <span class="n">n_blocks</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">block_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coarse_graining</span><span class="o">.</span><span class="n">partition</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">block_j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coarse_graining</span><span class="o">.</span><span class="n">partition</span><span class="p">):</span>
+                <span class="c1"># Sum probabilities from all states in block_i to all states in block_j</span>
+                <span class="n">coarse_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="n">block_i</span><span class="p">,</span> <span class="n">block_j</span><span class="p">)])</span>
+        
+        <span class="c1"># Normalize each row</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">):</span>
+            <span class="n">row_sum</span> <span class="o">=</span> <span class="n">coarse_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">row_sum</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">coarse_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/=</span> <span class="n">row_sum</span>
+
+        <span class="k">return</span> <span class="n">StochasticMatrix</span><span class="p">(</span><span class="n">coarse_matrix</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StochasticMatrix.evolve_distribution">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.evolve_distribution">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evolve_distribution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_distribution</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evolve an initial distribution through the stochastic matrix for a given number of steps. </span>
+
+<span class="sd">        Mainly used to verify consistency with a coarse-graining.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        initial_distribution : array-like</span>
+<span class="sd">            Initial state distribution (must sum to 1)</span>
+<span class="sd">        steps : int, default=1</span>
+<span class="sd">            Number of steps to evolve the distribution</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            List of distributions at each step, including the initial state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">initial_distribution</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Initial distribution must sum to 1&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">steps</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Steps must be non-negative&quot;</span><span class="p">)</span>
+        
+        <span class="n">current_distribution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">initial_distribution</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        
+        <span class="c1"># Collect distributions at each step</span>
+        <span class="n">distributions</span> <span class="o">=</span> <span class="p">[</span><span class="n">current_distribution</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+            <span class="n">current_distribution</span> <span class="o">=</span> <span class="n">current_distribution</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+            <span class="c1"># Ensure numerical stability</span>
+            <span class="n">current_distribution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">current_distribution</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">distributions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_distribution</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">distributions</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StochasticMatrix.inconsistency_sum_over_starts">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.inconsistency_sum_over_starts">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inconsistency_sum_over_starts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coarse_graining</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For each node i in the micro chain, start a delta distribution on i,</span>
+<span class="sd">        and in the macro chain, start a delta on the block containing i.</span>
+<span class="sd">        Evolve each for &#39;steps&#39; timesteps and measure KL at each step.</span>
+<span class="sd">        Return the sum of KL divergences across all nodes i.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span>
+        <span class="n">total_kl</span> <span class="o">=</span> <span class="mf">0.0</span>
+        
+        <span class="k">for</span> <span class="n">start_node</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="c1"># 1. Micro initial distribution = delta on &#39;start_node&#39;</span>
+            <span class="n">init_micro</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">init_micro</span><span class="p">[</span><span class="n">start_node</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            
+            <span class="c1"># 2. Macro initial distribution = delta on the block containing &#39;start_node&#39;</span>
+            <span class="n">block_index</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">b_idx</span><span class="p">,</span> <span class="n">block</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coarse_graining</span><span class="o">.</span><span class="n">partition</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">start_node</span> <span class="ow">in</span> <span class="n">block</span><span class="p">:</span>
+                    <span class="n">block_index</span> <span class="o">=</span> <span class="n">b_idx</span>
+                    <span class="k">break</span>
+            <span class="n">init_macro</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">coarse_graining</span><span class="o">.</span><span class="n">partition</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">init_macro</span><span class="p">[</span><span class="n">block_index</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            
+            <span class="n">macro_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coarse_grain</span><span class="p">(</span><span class="n">coarse_graining</span><span class="p">)</span>
+            <span class="c1"># Evolve both</span>
+            <span class="n">micro_dist_evolution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evolve_distribution</span><span class="p">(</span><span class="n">init_micro</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
+            <span class="n">macro_dist_evolution</span> <span class="o">=</span> <span class="n">macro_matrix</span><span class="o">.</span><span class="n">evolve_distribution</span><span class="p">(</span><span class="n">init_macro</span><span class="p">,</span> <span class="n">steps</span><span class="p">)</span>
+            <span class="c1"># Sum KL for each timestep</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                <span class="c1"># Lump the micro dist onto coarse blocks</span>
+                <span class="n">micro_agg</span> <span class="o">=</span> <span class="n">coarse_graining</span><span class="o">.</span><span class="n">coarse_grain_distribution</span><span class="p">(</span><span class="n">micro_dist_evolution</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
+                <span class="n">macro_dist</span> <span class="o">=</span> <span class="n">macro_dist_evolution</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+                <span class="n">total_kl</span> <span class="o">+=</span> <span class="n">kl_divergence</span><span class="p">(</span><span class="n">micro_agg</span><span class="p">,</span> <span class="n">macro_dist</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">total_kl</span></div>
+
+
+<div class="viewcode-block" id="StochasticMatrix.is_consistent_with">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.is_consistent_with">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_consistent_with</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coarse_graining</span><span class="p">,</span> <span class="n">kl_threshold</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the stochastic matrix is consistent with a given coarse-graining.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">inconsistency_sum_over_starts</span><span class="p">(</span><span class="n">coarse_graining</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">kl_threshold</span></div>
+
+
+<div class="viewcode-block" id="StochasticMatrix.find_consistent_coarse_grainings">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.find_consistent_coarse_grainings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_consistent_coarse_grainings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coarse_grainings</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kl_threshold</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find coarse-grainings that are consistent with the stochastic matrix.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        coarse_grainings : list of CoarseGraining objects</span>
+<span class="sd">            List of coarse-grainings to check for consistency</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        list of CoarseGraining</span>
+<span class="sd">            List of coarse-grainings that are consistent with the matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">consistent_grainings</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="k">if</span> <span class="n">coarse_grainings</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">coarse_grainings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_coarse_grainings</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">cg</span> <span class="ow">in</span> <span class="n">coarse_grainings</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_consistent_with</span><span class="p">(</span><span class="n">cg</span><span class="p">,</span> <span class="n">kl_threshold</span><span class="o">=</span><span class="n">kl_threshold</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">):</span>
+                <span class="n">consistent_grainings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cg</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">consistent_grainings</span></div>
+
+    
+<div class="viewcode-block" id="StochasticMatrix.sufficiency">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.sufficiency">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sufficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cause</span><span class="p">,</span> <span class="n">effect</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the sufficiency of a cause for an effect.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        cause : int</span>
+<span class="sd">            Index of the cause state</span>
+<span class="sd">        effect : int</span>
+<span class="sd">            Index of the effect state</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        float</span>
+<span class="sd">            The sufficiency value for the cause-effect pair</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">[</span><span class="n">cause</span><span class="p">,</span> <span class="n">effect</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="StochasticMatrix.necessity">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.necessity">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">necessity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cause</span><span class="p">,</span> <span class="n">effect</span><span class="p">,</span> <span class="n">intervention_distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        TODO: check if we should indeed use a uniform prior over all but one state. </span>
+<span class="sd">        Compute the necessity of a cause for an effect.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        cause : int</span>
+<span class="sd">            Index of the cause state</span>
+<span class="sd">        effect : int</span>
+<span class="sd">            Index of the effect state</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        float</span>
+<span class="sd">            The necessity value for the cause-effect pair</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">intervention_distribution</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">intervention_distribution</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">weights</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;intervention_distribution must be length </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">weights</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;intervention_distribution must sum to 1.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Default to uniform distribution over states</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">weights</span><span class="p">[</span><span class="n">cause</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Exclude the cause state</span>
+        <span class="n">weighted_transitions</span> <span class="o">=</span> <span class="p">[</span><span class="n">weights</span><span class="p">[</span><span class="n">alt_cause</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">[</span><span class="n">alt_cause</span><span class="p">,</span> <span class="n">effect</span><span class="p">]</span> <span class="k">for</span> <span class="n">alt_cause</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">)</span> <span class="k">if</span> <span class="n">alt_cause</span> <span class="o">!=</span> <span class="n">cause</span><span class="p">]</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">weighted_transitions</span><span class="p">)</span></div>
+
+        
+        
+<div class="viewcode-block" id="StochasticMatrix.average_sufficiency">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.average_sufficiency">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">average_sufficiency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intervention_distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the average sufficiency of a stochastic matrix under a given intervention distribution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        intervention_distribution : array-like</span>
+<span class="sd">            Probability distribution over rows, i.e. sums to 1.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        avg_sufficiency : float</span>
+<span class="sd">            The average sufficiency value for the matrix under the given intervention distribution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">intervention_distribution</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Default to uniform distribution over states</span>
+            <span class="n">intervention_distribution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span>
+            
+        <span class="n">prob_of_transitions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">intervention_distribution</span><span class="p">)</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span>  <span class="c1"># Weighted average of rows</span>
+        <span class="n">avg_sufficiency</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">prob_of_transitions</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">avg_sufficiency</span></div>
+
+
+<div class="viewcode-block" id="StochasticMatrix.average_necessity">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.average_necessity">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">average_necessity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intervention_distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the average necessity of a stochastic matrix under a given intervention distribution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        intervention_distribution : array-like</span>
+<span class="sd">            Probability distribution over rows, i.e. sums to 1.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        avg_necessity : float</span>
+<span class="sd">            The average necessity value for the matrix under the given intervention distribution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Default to uniform distribution over states</span>
+        <span class="k">if</span> <span class="n">intervention_distribution</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Default to uniform distribution over states</span>
+            <span class="n">intervention_distribution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span>
+        <span class="n">prob_of_transitions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">intervention_distribution</span><span class="p">)</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span>  <span class="c1"># Weighted average of rows</span>
+        <span class="n">avg_necessity</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">cause</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">effect</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">):</span>
+                <span class="n">avg_necessity</span> <span class="o">+=</span> <span class="n">prob_of_transitions</span><span class="p">[</span><span class="n">cause</span><span class="p">,</span> <span class="n">effect</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">necessity</span><span class="p">(</span><span class="n">cause</span><span class="p">,</span> <span class="n">effect</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">avg_necessity</span></div>
+
+
+
+<div class="viewcode-block" id="StochasticMatrix.determinism">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.determinism">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">determinism</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intervention_distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the determinism coefficient of a row-stochastic matrix, </span>
+<span class="sd">        using the given intervention_distribution as row weights.</span>
+<span class="sd">        For each row i, compute:</span>
+<span class="sd">            det_i = KL( G[i,:] || Uniform(n) ) / log2(n)</span>
+<span class="sd">        Then return the weighted average, weighting row i by </span>
+<span class="sd">        intervention_distribution[i].</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        intervention_distribution : array-like</span>
+<span class="sd">            Probability distribution over rows, i.e. sums to 1.</span>
+<span class="sd">       </span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        det_coefficient : float</span>
+<span class="sd">            The weighted-average determinism coefficient.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot compute determinism for an empty matrix.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">1.0</span>
+        <span class="k">if</span> <span class="n">intervention_distribution</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Default to uniform distribution over states</span>
+            <span class="n">intervention_distribution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">intervention_distribution</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">weights</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="n">n</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;intervention_distribution must be length </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">weights</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;intervention_distribution must sum to 1.&quot;</span><span class="p">)</span>
+
+
+        <span class="n">row_det</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">row_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span>
+            <span class="n">row_entropy</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">row_i</span><span class="p">)</span>
+            <span class="n">row_det</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">row_entropy</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># Weighted average</span>
+        <span class="n">det_coefficient</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">row_det</span> <span class="o">*</span> <span class="n">weights</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">det_coefficient</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Degeneracy coefficient exceeds 1.0, which is unexpected.&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">det_coefficient</span></div>
+
+    
+
+<div class="viewcode-block" id="StochasticMatrix.degeneracy">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.degeneracy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">degeneracy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intervention_distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the &#39;degeneracy coefficient&#39; of a row-stochastic matrix</span>
+<span class="sd">        under a specified intervention distribution.</span>
+
+<span class="sd">        1) Let w = intervention_distribution (length n, sums to 1).</span>
+<span class="sd">        2) Form U^E = sum_i [ w_i * G[i,:] ] (a single distribution in R^n).</span>
+<span class="sd">        3) Compare U^E to the n-dim uniform distribution U = [1/n,...,1/n].</span>
+<span class="sd">        4) The degeneracy coefficient is the normalised inverse entropy of the marginal effect distribution</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        intervention_distribution : array-like</span>
+<span class="sd">            Probability distribution over rows, i.e. sums to 1.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        deg_coeff : float</span>
+<span class="sd">            The degeneracy coefficient for G under that intervention distribution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot compute degeneracy for an empty matrix.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">1.0</span>
+        <span class="k">if</span> <span class="n">intervention_distribution</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Default to uniform distribution over states</span>
+            <span class="n">intervention_distribution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">intervention_distribution</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">w</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="n">n</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;intervention_distribution must be length </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;intervention_distribution must sum to 1.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 1) Weighted average of rows is the marginal effect distribution</span>
+        <span class="n">marginal_effect_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">marginal_effect_dist</span> <span class="o">+=</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span>
+
+        <span class="n">effect_entropy</span> <span class="o">=</span> <span class="n">entropy</span><span class="p">(</span><span class="n">marginal_effect_dist</span><span class="p">)</span>
+
+        <span class="c1"># 4) Divide by log2(n) to normalize</span>
+        <span class="n">deg_coefficient</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">effect_entropy</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">deg_coefficient</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Degeneracy coefficient exceeds 1.0, which is unexpected.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">deg_coefficient</span></div>
+
+
+<div class="viewcode-block" id="StochasticMatrix.effectiveness">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.effectiveness">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">effectiveness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intervention_distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the effectiveness of a stochastic matrix under a given intervention distribution.</span>
+<span class="sd">        </span>
+<span class="sd">        Effectiveness is defined as the determinism coefficient minus the degeneracy coefficient.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        intervention_distribution : array-like</span>
+<span class="sd">            Probability distribution over rows, i.e. sums to 1.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        effectiveness : float</span>
+<span class="sd">            The effectiveness value for the matrix under the given intervention distribution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    
+        <span class="k">if</span> <span class="n">intervention_distribution</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Default to uniform distribution over states</span>
+            <span class="n">intervention_distribution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">intervention_distribution</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;intervention_distribution must sum to 1.&quot;</span><span class="p">)</span>
+        
+        <span class="n">det_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">determinism</span><span class="p">(</span><span class="n">intervention_distribution</span><span class="p">)</span>
+        <span class="n">deg_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">degeneracy</span><span class="p">(</span><span class="n">intervention_distribution</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">det_val</span> <span class="o">-</span> <span class="n">deg_val</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;effectiveness exceeds 1.0, which is unexpected.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">det_val</span> <span class="o">-</span> <span class="n">deg_val</span></div>
+
+    
+<div class="viewcode-block" id="StochasticMatrix.effective_information">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.effective_information">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">effective_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intervention_distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the effective information of a stochastic matrix under a given intervention distribution.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        intervention_distribution : array-like, optional</span>
+<span class="sd">            Probability distribution over rows, i.e. sums to 1.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        effective_information : float</span>
+<span class="sd">            The effective information value for the matrix under the given intervention distribution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">effectiveness</span><span class="p">(</span><span class="n">intervention_distribution</span><span class="o">=</span><span class="n">intervention_distribution</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="StochasticMatrix.suff_plus_nec">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.suff_plus_nec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">suff_plus_nec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">intervention_distribution</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the sum of average sufficiency and average necessity.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        intervention_distribution : array-like, optional</span>
+<span class="sd">            Probability distribution over rows, i.e. sums to 1.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        float</span>
+<span class="sd">            The sum of average sufficiency and average necessity values for the matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">avg_suff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">average_sufficiency</span><span class="p">(</span><span class="n">intervention_distribution</span><span class="o">=</span><span class="n">intervention_distribution</span><span class="p">)</span>
+        <span class="n">avg_nec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">average_necessity</span><span class="p">(</span><span class="n">intervention_distribution</span><span class="o">=</span><span class="n">intervention_distribution</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">avg_suff</span> <span class="o">+</span> <span class="n">avg_nec</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">avg_suff</span> <span class="o">+</span> <span class="n">avg_nec</span>        </div>
+
+
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;String representation of the matrix.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;StochasticMatrix(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="si">}</span><span class="s2">):</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="si">}</span><span class="s2">&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Representation of the matrix.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;StochasticMatrix(shape=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">)&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check equality with another StochasticMatrix.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">StochasticMatrix</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">matrix</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span><span class="p">)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__matmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Matrix multiplication with another StochasticMatrix.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">StochasticMatrix</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span> <span class="o">@</span> <span class="n">other</span><span class="o">.</span><span class="n">matrix</span>
+            <span class="k">return</span> <span class="n">StochasticMatrix</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span> <span class="o">@</span> <span class="n">other</span>
+        
+<div class="viewcode-block" id="StochasticMatrix.plot">
+<a class="viewcode-back" href="../../pymergence.html#pymergence.StochasticMatrix.StochasticMatrix.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the stochastic matrix as a heatmap.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        ax : matplotlib Axes, optional</span>
+<span class="sd">            Axes to plot on. If None, creates a new figure and axes.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Additional keyword arguments for matplotlib&#39;s imshow function</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        matplotlib Axes</span>
+<span class="sd">            The axes with the plotted heatmap</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+        
+        <span class="n">cax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Stochastic Matrix Heatmap&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;To State&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;From State&quot;</span><span class="p">)</span>
+        
+        <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">cax</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">ax</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, PlaceholderName.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

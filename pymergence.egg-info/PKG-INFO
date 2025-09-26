@@ -1,0 +1,17 @@
+Metadata-Version: 2.4
+Name: pymergence
+Version: 0.1.0
+Summary: Toolkit for calculating and visualizing causal emergence
+Author-email: Abel Jansma <abel_jansma@hotmail.com>
+License: MIT
+Requires-Python: >=3.8
+License-File: LICENSE
+Requires-Dist: numpy>=1.20.0
+Requires-Dist: matplotlib>=3.3.0
+Requires-Dist: networkx>=3.4.0
+Requires-Dist: pygraphviz>=1.14
+Provides-Extra: dev
+Requires-Dist: pytest>=6.0; extra == "dev"
+Requires-Dist: black; extra == "dev"
+Requires-Dist: flake8; extra == "dev"
+Dynamic: license-file
