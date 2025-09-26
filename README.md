@@ -15,8 +15,6 @@ PyMergence provides a comprehensive set of tools for analyzing causal emergence 
 
 ## Installation Instructions
 
-[to finalize, should probably be replaced with a proper PyPI link once available]
-
 ### Requirements
 
 - Python ≥ 3.8
@@ -52,7 +50,6 @@ python -m pytest tests
 ```
 
 ## License
-[To discuss: which license to use?]
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Citation
@@ -62,24 +59,20 @@ If you use PyMergence in your research, please cite:
 ```bibtex
 @article{2025causalEmergence,
   title={Causal Emergence 2.0: Quantifying emergent complexity},
-  author={PlaceholderName},
+  author={Erik Hoel},
   journal={arXiv preprint arXiv:2503.13395},
   year={2025}
+}
+
+@software{pymergence2025,
+  title={PyMergence: A Python toolkit for causal emergence 2.0},
+  author={Jansma, Abel and Hoel, Erik},
+  year={2025},
+  url={https://github.com/EI-research-group/pymergence},
+  doi={10.5281/zenodo.XXXXXXX}
 }
 ```
 
 ---
 
-*PyMergence is under active development. API may change between versions until official v1.0.0 release.*
-
-## Roadmap
-- [X] Add documentation.
-- [X] Add the single path measure from the CE2.0 paper
-- [X] Add a notebook that recreates the figures from the CE2.0 paper.
-- [X] Add a jupyter notebook to present and explain package use. 
-- [ ] Add more tests for less regular TPMs.
-- [ ] Add test for finding correct single path.
-- [ ] Should we add a 'lattice' class?
-- [ ] Make our delta-CP measure independent of `networkx` and faster by using adjacency matrices. 
-- [ ] Speed up construction of Hasse diagram (Adj mat and then transitive reduction?). 
-- [ ] Add option to calculate möbius inverse of CP. 
+*PyMergence is under active development.*
