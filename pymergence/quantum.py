@@ -29,14 +29,11 @@ def quantum_channel_to_stochastic_matrix(circuit_fn, num_qubits, params):
 
     # Get Unitary U
     # U[i, j] = <i|U|j> (amplitude to go from state j to state i)
-    # Using 'jax' interface for differentiability
-    # qml.matrix returns a function that computes the matrix for given args.
     U = qml.matrix(wrapper, wire_order=range(num_qubits))(params)
 
     # Stochastic Matrix M where M[j, i] is prob of transition j -> i
     # M[j, i] = |<i|U|j>|^2 = |U[i, j]|^2
     # So M is the transpose of element-wise squared U.
-    # U is complex, so abs(U)**2 gives real probabilities.
     M = jnp.abs(U.T)**2
 
     return M
@@ -70,16 +67,18 @@ def maximize_quantum_emergence(circuit_fn, num_qubits, init_params, steps=100, l
     optimizer = optax.adam(learning_rate)
     opt_state = optimizer.init(init_params)
 
-    # We define step function inside to capture optimizer and circuit_fn
+    @jax.jit
+    def loss_fn(p):
+        M = quantum_channel_to_stochastic_matrix(circuit_fn, num_qubits, p)
+        # Minimize negative EI (maximize EI)
+        # Using functional wrapper or class instantiation
+        sm = jax_core.StochasticMatrix(M)
+        return -sm.effective_information()
+
     @jax.jit
     def step(p, opt_state):
-        def loss_fn(p_val):
-            M = quantum_channel_to_stochastic_matrix(circuit_fn, num_qubits, p_val)
-            # Minimize negative EI (maximize EI)
-            return -jax_core.effective_information(M)
-
         loss, grads = jax.value_and_grad(loss_fn)(p)
-        updates, opt_state = optimizer.update(grads, opt_state)
+        updates, opt_state = optimizer.update(grads, opt_state, p)
         p = optax.apply_updates(p, updates)
         return p, opt_state, loss
 
@@ -87,10 +86,9 @@ def maximize_quantum_emergence(circuit_fn, num_qubits, init_params, steps=100, l
     loss_history = []
 
     # Training loop
-    # Convert range to list or use simple loop
+    # Simple Python loop fine for demonstration
     for i in range(steps):
         params, opt_state, loss = step(params, opt_state)
-        # Store loss (scalar)
         loss_history.append(float(loss))
 
     final_loss = loss_history[-1]
