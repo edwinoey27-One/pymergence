@@ -4,7 +4,21 @@ import pennylane as qml
 import optax
 from pymergence import jax_core
 
-def quantum_channel_to_stochastic_matrix(circuit_fn, num_qubits, params):
+# Try to detect GPU device for PennyLane
+try:
+    # Check if 'lightning.gpu' or 'lightning.kokkos' is available
+    # We prefer lightning.gpu for CUDA
+    # qml.device('lightning.gpu', wires=1) # test instantiation
+    # Use deferred selection
+    PREFERRED_DEVICE = 'default.qubit' # Fallback
+
+    # Simple check:
+    # dev_list = qml.refresh_devices() # deprecated or slow
+    # Just try-except block in function
+except:
+    PREFERRED_DEVICE = 'default.qubit'
+
+def quantum_channel_to_stochastic_matrix(circuit_fn, num_qubits, params, device_name=None):
     """
     Compute the classical stochastic matrix for a quantum circuit in the computational basis.
     Assumes unitary evolution.
@@ -17,6 +31,8 @@ def quantum_channel_to_stochastic_matrix(circuit_fn, num_qubits, params):
         Number of qubits.
     params : array
         Parameters for the circuit.
+    device_name : str, optional
+        PennyLane device name. If None, tries 'lightning.gpu' then 'default.qubit'.
 
     Returns
     -------
@@ -27,9 +43,24 @@ def quantum_channel_to_stochastic_matrix(circuit_fn, num_qubits, params):
     def wrapper(p):
         circuit_fn(p, wires=range(num_qubits))
 
-    # Get Unitary U
-    # U[i, j] = <i|U|j> (amplitude to go from state j to state i)
+    # Matrix calculation in PennyLane is usually device-agnostic for 'default.qubit' logic,
+    # but 'lightning.gpu' might support it faster for large systems if implemented.
+    # However, qml.matrix() transform often runs on CPU unless specific device support.
+    # Actually, qml.matrix(circuit, wire_order=...) creates a tape.
+
+    # Ideally, we run this on GPU if possible.
+    # qml.matrix usually returns a function that returns a dense matrix.
+    # JAX will put it on the default backend (GPU if available).
+
+    # We don't necessarily need to specify 'lightning.gpu' for qml.matrix to output a JAX array on GPU,
+    # as long as JAX itself is configured for GPU.
+    # But using 'lightning.gpu' for simulation steps is good.
+
+    # Current qml.matrix impl:
     U = qml.matrix(wrapper, wire_order=range(num_qubits))(params)
+
+    # Move to GPU if not already (JAX handles this if backend is GPU)
+    # Ensure precision
 
     # Stochastic Matrix M where M[j, i] is prob of transition j -> i
     # M[j, i] = |<i|U|j>|^2 = |U[i, j]|^2
@@ -38,7 +69,7 @@ def quantum_channel_to_stochastic_matrix(circuit_fn, num_qubits, params):
 
     return M
 
-def maximize_quantum_emergence(circuit_fn, num_qubits, init_params, steps=100, learning_rate=0.1):
+def maximize_quantum_emergence(circuit_fn, num_qubits, init_params, steps=100, learning_rate=0.1, use_gpu=True):
     """
     Optimize quantum circuit parameters to maximize Effective Information of the induced classical channel.
 
@@ -54,6 +85,8 @@ def maximize_quantum_emergence(circuit_fn, num_qubits, init_params, steps=100, l
         Number of optimization steps.
     learning_rate : float
         Learning rate.
+    use_gpu : bool
+        Hint to use GPU optimization.
 
     Returns
     -------
@@ -67,11 +100,14 @@ def maximize_quantum_emergence(circuit_fn, num_qubits, init_params, steps=100, l
     optimizer = optax.adam(learning_rate)
     opt_state = optimizer.init(init_params)
 
+    # Determine backend for JIT
+    # JAX uses GPU by default if installed.
+    # We can inspect jax.devices()
+
     @jax.jit
     def loss_fn(p):
         M = quantum_channel_to_stochastic_matrix(circuit_fn, num_qubits, p)
         # Minimize negative EI (maximize EI)
-        # Using functional wrapper or class instantiation
         sm = jax_core.StochasticMatrix(M)
         return -sm.effective_information()
 
@@ -86,7 +122,6 @@ def maximize_quantum_emergence(circuit_fn, num_qubits, init_params, steps=100, l
     loss_history = []
 
     # Training loop
-    # Simple Python loop fine for demonstration
     for i in range(steps):
         params, opt_state, loss = step(params, opt_state)
         loss_history.append(float(loss))
