@@ -8,8 +8,8 @@ import time
 from typing import Any, Tuple, Dict, List
 
 # Import our core components
-from pymergence.jax_core import StochasticMatrix, Partition
-from pymergence.brax_bridge import BraxDataLoader
+from pymergence.accel.jax_core import StochasticMatrix, Partition
+from pymergence.integration.brax_bridge import BraxDataLoader
 
 class CascadePulse(eqx.Module):
     """

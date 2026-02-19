@@ -1,13 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from pymergence.utils import kl_divergence, entropy
-from pymergence.CoarseGraining import CoarseGraining, generate_all_coarse_grainings
+from pymergence.core.utils import kl_divergence, entropy
+from pymergence.core.CoarseGraining import CoarseGraining, generate_all_coarse_grainings
 
 # Try importing JAX and Equinox
 try:
     import jax
     import jax.numpy as jnp
-    from pymergence import jax_core
+    # Correct import for the new structure
+    from pymergence.accel import jax_core
     HAS_JAX = True
 except ImportError:
     HAS_JAX = False
@@ -18,10 +19,10 @@ class StochasticMatrix:
     A class for working with (row) stochastic matrices.
     Supports 'numpy' and 'jax' (Equinox) backends.
     """
-    
+
     def __init__(self, matrix, validate=True, tolerance=1e-10, backend=None):
         self.tolerance = tolerance
-        
+
         # Determine backend
         if backend is None:
             if HAS_JAX and (isinstance(matrix, jax.Array) or hasattr(matrix, 'device_buffer')):
@@ -41,7 +42,7 @@ class StochasticMatrix:
             self.matrix = np.asarray(matrix, dtype=float)
             if validate:
                 self._validate_stochastic()
-    
+
     def _validate_stochastic(self):
         if self.matrix.ndim != 2:
             raise ValueError("Matrix must be 2-dimensional")
@@ -53,7 +54,7 @@ class StochasticMatrix:
         if not np.allclose(row_sums, 1.0, atol=self.tolerance):
             raise ValueError("Each row must sum to 1 (stochastic property)")
         return True
-    
+
     def to_jax(self):
         """Convert to JAX backend (Equinox module)."""
         if not HAS_JAX:
@@ -90,7 +91,7 @@ class StochasticMatrix:
         if self.backend == 'jax':
             # Delegate to Equinox module method
             return float(self._jax_obj.effective_information(intervention_distribution))
-        
+
         return self.effectiveness(intervention_distribution) * np.log2(self.n_states)
 
     def effectiveness(self, intervention_distribution=None):
@@ -104,12 +105,12 @@ class StochasticMatrix:
     def determinism(self, intervention_distribution=None):
         if self.backend == 'jax':
             return float(self._jax_obj.determinism(intervention_distribution))
-            
+
         # NumPy impl
         if self.n_states <= 1: return 1.0
         if intervention_distribution is None:
             intervention_distribution = np.ones(self.n_states) / self.n_states
-        
+
         row_det = np.zeros(self.n_states)
         for i in range(self.n_states):
             # entropy here is from utils (NumPy)
@@ -119,7 +120,7 @@ class StochasticMatrix:
     def degeneracy(self, intervention_distribution=None):
         if self.backend == 'jax':
             return float(self._jax_obj.degeneracy(intervention_distribution))
-            
+
         # NumPy impl
         if self.n_states <= 1: return 1.0
         if intervention_distribution is None:
@@ -168,7 +169,7 @@ class StochasticMatrix:
     def coarse_grain(self, coarse_graining):
         # Handle backend logic. For JAX, we might need a workaround or implement logic.
         # CoarseGraining object is Python tuples.
-        
+
         if self.backend == 'jax':
              # Fallback: Convert to numpy, do op, convert back to JAX wrapper.
              # This avoids reimplementing complex slicing logic in JAX for now.

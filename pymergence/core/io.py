@@ -3,7 +3,7 @@ import numpy as np
 import jax.numpy as jnp
 from safetensors.numpy import save_file, load_file
 import equinox as eqx
-from pymergence.jax_core import Partition
+from pymergence.accel.jax_core import Partition
 
 def save_causal_model(partition: Partition, metadata: dict, filepath_prefix: str):
     """

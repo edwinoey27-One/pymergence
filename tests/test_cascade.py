@@ -1,8 +1,8 @@
 import jax
 import jax.numpy as jnp
 import pytest
-from pymergence.cascade_pulse import CascadePulse
-from pymergence.validation import ValidationHarness
+from pymergence.integration.cascade_pulse import CascadePulse
+from pymergence.lab.validation import ValidationHarness
 
 def test_cascade_pulse_init():
     key = jax.random.PRNGKey(0)

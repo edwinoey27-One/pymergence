@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from pymergence.causal_discovery import CausalDiscovery
+from pymergence.integration.causal_discovery import CausalDiscovery
 
 def test_causal_discovery():
     # Generate simple causal structure: X -> Y

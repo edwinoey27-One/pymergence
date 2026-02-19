@@ -1,7 +1,7 @@
 import pytest
 import jax.numpy as jnp
 import pennylane as qml
-from pymergence.quantum import quantum_channel_to_stochastic_matrix, maximize_quantum_emergence
+from pymergence.integration.quantum import quantum_channel_to_stochastic_matrix, maximize_quantum_emergence
 
 def test_quantum_channel():
     # 1 qubit circuit: Identity

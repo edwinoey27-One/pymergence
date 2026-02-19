@@ -1,7 +1,7 @@
 import jax
 import jax.numpy as jnp
 import pytest
-from pymergence.equivariant import GeometricPartition
+from pymergence.accel.equivariant import GeometricPartition
 
 def test_geometric_partition_shapes():
     key = jax.random.PRNGKey(0)

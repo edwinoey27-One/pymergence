@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
-from pymergence.StochasticMatrix import StochasticMatrix
-from pymergence.iit import IITAnalyzer, HAS_PYPHI
+from pymergence.core.StochasticMatrix import StochasticMatrix
+from pymergence.integration.iit import IITAnalyzer, HAS_PYPHI
 
 @pytest.mark.skipif(not HAS_PYPHI, reason="PyPhi not installed")
 def test_iit_phi_computation():

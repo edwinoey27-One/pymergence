@@ -37,3 +37,96 @@
   'VALIDATE_CONDITIONAL_INDEPENDENCE': True,
   'VALIDATE_SUBSYSTEM_STATES': True,
   'WELCOME_OFF': False}
+2026-02-19 09:31:26,173 [pyphi.conf] INFO MainProcess: PyPhi v1.2.0
+2026-02-19 09:31:26,173 [pyphi.conf] INFO MainProcess: Using default configuration (no configuration file provided)
+2026-02-19 09:31:26,174 [pyphi.conf] INFO MainProcess: Current PyPhi configuration:
+ { 'ASSUME_CUTS_CANNOT_CREATE_NEW_CONCEPTS': False,
+  'CACHE_POTENTIAL_PURVIEWS': True,
+  'CACHE_REPERTOIRES': True,
+  'CACHE_SIAS': False,
+  'CACHING_BACKEND': 'fs',
+  'CLEAR_SUBSYSTEM_CACHES_AFTER_COMPUTING_SIA': False,
+  'CUT_ONE_APPROXIMATION': False,
+  'FS_CACHE_DIRECTORY': '__pyphi_cache__',
+  'FS_CACHE_VERBOSITY': 0,
+  'LOG_FILE': 'pyphi.log',
+  'LOG_FILE_LEVEL': 'INFO',
+  'LOG_STDOUT_LEVEL': 'WARNING',
+  'MAXIMUM_CACHE_MEMORY_PERCENTAGE': 50,
+  'MEASURE': 'EMD',
+  'MONGODB_CONFIG': { 'collection_name': 'cache',
+                      'database_name': 'pyphi',
+                      'host': 'localhost',
+                      'port': 27017},
+  'NUMBER_OF_CORES': -1,
+  'PARALLEL_COMPLEX_EVALUATION': False,
+  'PARALLEL_CONCEPT_EVALUATION': False,
+  'PARALLEL_CUT_EVALUATION': True,
+  'PARTITION_TYPE': 'BI',
+  'PICK_SMALLEST_PURVIEW': False,
+  'PRECISION': 6,
+  'PRINT_FRACTIONS': True,
+  'PROGRESS_BARS': True,
+  'REDIS_CACHE': False,
+  'REDIS_CONFIG': {'db': 0, 'host': 'localhost', 'port': 6379, 'test_db': 1},
+  'REPR_VERBOSITY': 2,
+  'SINGLE_MICRO_NODES_WITH_SELFLOOPS_HAVE_PHI': False,
+  'SYSTEM_CUTS': '3.0_STYLE',
+  'USE_SMALL_PHI_DIFFERENCE_FOR_CES_DISTANCE': False,
+  'VALIDATE_CONDITIONAL_INDEPENDENCE': True,
+  'VALIDATE_SUBSYSTEM_STATES': True,
+  'WELCOME_OFF': False}
+2026-02-19 09:31:27,359 [jax._src.xla_bridge] INFO MainProcess: Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2026-02-19 09:33:02,650 [pyphi.conf] INFO MainProcess: PyPhi v1.2.0
+2026-02-19 09:33:02,651 [pyphi.conf] INFO MainProcess: Using default configuration (no configuration file provided)
+2026-02-19 09:33:02,652 [pyphi.conf] INFO MainProcess: Current PyPhi configuration:
+ { 'ASSUME_CUTS_CANNOT_CREATE_NEW_CONCEPTS': False,
+  'CACHE_POTENTIAL_PURVIEWS': True,
+  'CACHE_REPERTOIRES': True,
+  'CACHE_SIAS': False,
+  'CACHING_BACKEND': 'fs',
+  'CLEAR_SUBSYSTEM_CACHES_AFTER_COMPUTING_SIA': False,
+  'CUT_ONE_APPROXIMATION': False,
+  'FS_CACHE_DIRECTORY': '__pyphi_cache__',
+  'FS_CACHE_VERBOSITY': 0,
+  'LOG_FILE': 'pyphi.log',
+  'LOG_FILE_LEVEL': 'INFO',
+  'LOG_STDOUT_LEVEL': 'WARNING',
+  'MAXIMUM_CACHE_MEMORY_PERCENTAGE': 50,
+  'MEASURE': 'EMD',
+  'MONGODB_CONFIG': { 'collection_name': 'cache',
+                      'database_name': 'pyphi',
+                      'host': 'localhost',
+                      'port': 27017},
+  'NUMBER_OF_CORES': -1,
+  'PARALLEL_COMPLEX_EVALUATION': False,
+  'PARALLEL_CONCEPT_EVALUATION': False,
+  'PARALLEL_CUT_EVALUATION': True,
+  'PARTITION_TYPE': 'BI',
+  'PICK_SMALLEST_PURVIEW': False,
+  'PRECISION': 6,
+  'PRINT_FRACTIONS': True,
+  'PROGRESS_BARS': True,
+  'REDIS_CACHE': False,
+  'REDIS_CONFIG': {'db': 0, 'host': 'localhost', 'port': 6379, 'test_db': 1},
+  'REPR_VERBOSITY': 2,
+  'SINGLE_MICRO_NODES_WITH_SELFLOOPS_HAVE_PHI': False,
+  'SYSTEM_CUTS': '3.0_STYLE',
+  'USE_SMALL_PHI_DIFFERENCE_FOR_CES_DISTANCE': False,
+  'VALIDATE_CONDITIONAL_INDEPENDENCE': True,
+  'VALIDATE_SUBSYSTEM_STATES': True,
+  'WELCOME_OFF': False}
+2026-02-19 09:33:03,460 [jax._src.xla_bridge] INFO MainProcess: Unable to initialize backend 'tpu': INTERNAL: Failed to open libtpu.so: libtpu.so: cannot open shared object file: No such file or directory
+2026-02-19 09:33:12,873 [root] INFO MainProcess: Using JAX default device: TFRT_CPU_0.
+2026-02-19 09:33:20,754 [root] INFO MainProcess: Using JAX default device: TFRT_CPU_0.
+2026-02-19 09:33:23,763 [root] INFO MainProcess: Using JAX default device: TFRT_CPU_0.
+2026-02-19 09:33:25,306 [root] INFO MainProcess: Using JAX default device: TFRT_CPU_0.
+2026-02-19 09:33:28,448 [root] INFO MainProcess: Using JAX default device: TFRT_CPU_0.
+2026-02-19 09:33:31,155 [root] INFO MainProcess: Using JAX default device: TFRT_CPU_0.
+2026-02-19 09:33:32,116 [root] INFO MainProcess: Using JAX default device: TFRT_CPU_0.
+2026-02-19 09:33:33,079 [root] INFO MainProcess: Using JAX default device: TFRT_CPU_0.
+2026-02-19 09:33:34,116 [root] INFO MainProcess: Using JAX default device: TFRT_CPU_0.
+2026-02-19 09:33:37,088 [root] INFO MainProcess: Using JAX default device: TFRT_CPU_0.
+2026-02-19 09:33:42,672 [root] INFO MainProcess: Using JAX default device: TFRT_CPU_0.
+2026-02-19 09:33:43,579 [root] INFO MainProcess: Using JAX default device: TFRT_CPU_0.
+2026-02-19 09:33:44,969 [root] INFO MainProcess: Using JAX default device: TFRT_CPU_0.

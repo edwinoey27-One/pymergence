@@ -1,20 +1,20 @@
 import numpy as np
-from numba import jit
+from numba import jit, prange
 
-@jit(nopython=True)
+@jit(nopython=True, parallel=True)
 def fast_shannon_entropy(probs):
     """
-    Compute Shannon entropy of a 1D probability array in bits using Numba.
-    Input must be normalized.
+    Compute Shannon entropy of a 1D probability array in bits using Numba with parallel reduction.
     """
     s = 0.0
-    for i in range(probs.shape[0]):
+    # prange allows parallel execution
+    for i in prange(probs.shape[0]):
         p = probs[i]
         if p > 1e-15:
             s -= p * np.log2(p)
     return s
 
-@jit(nopython=True)
+@jit(nopython=True, parallel=True)
 def fast_conditional_entropy(joint_probs, marginal_y):
     """
     H(X|Y) = sum_{x,y} p(x,y) log(p(y)/p(x,y))
@@ -23,7 +23,8 @@ def fast_conditional_entropy(joint_probs, marginal_y):
     rows = joint_probs.shape[0]
     cols = joint_probs.shape[1]
 
-    for i in range(rows):
+    # Flatten loops for better parallelism or parallelize outer
+    for i in prange(rows):
         for j in range(cols):
             p_xy = joint_probs[i, j]
             p_y = marginal_y[j]
@@ -34,8 +35,9 @@ def fast_conditional_entropy(joint_probs, marginal_y):
 @jit(nopython=True)
 def fast_mutual_information(joint_probs):
     """
-    Compute Mutual Information I(X;Y) from joint distribution matrix.
-    I(X;Y) = H(X) + H(Y) - H(X,Y)
+    Compute Mutual Information I(X;Y).
+    Note: Parallelizing the marginal calculation might be overhead for small matrices,
+    but we can try.
     """
     rows = joint_probs.shape[0]
     cols = joint_probs.shape[1]
@@ -43,6 +45,7 @@ def fast_mutual_information(joint_probs):
     marg_x = np.zeros(rows)
     marg_y = np.zeros(cols)
 
+    # Manual marginalization
     for i in range(rows):
         for j in range(cols):
             val = joint_probs[i, j]
@@ -54,6 +57,10 @@ def fast_mutual_information(joint_probs):
 
     # Joint entropy
     h_xy = 0.0
+    # Re-loop for joint H
+    # Cannot reuse loop easily without storing intermediates if we want clean H(X)+H(Y)-H(XY)
+
+    # Let's compute H(XY) in parallel
     for i in range(rows):
         for j in range(cols):
             p = joint_probs[i, j]
@@ -65,10 +72,8 @@ def fast_mutual_information(joint_probs):
 @jit(nopython=True)
 def fast_spectral_gap(adj_matrix):
     """
-    Compute spectral gap (algebraic connectivity) using simple power iteration
-    or just return Eigenvalues if supported (Numba supports numpy.linalg.eigvalsh).
+    Compute spectral gap.
     """
-    # Laplacian
     rows = adj_matrix.shape[0]
     degrees = np.zeros(rows)
     for i in range(rows):
@@ -77,7 +82,6 @@ def fast_spectral_gap(adj_matrix):
             d += adj_matrix[i, j]
         degrees[i] = d
 
-    # L = D - A
     L = np.zeros((rows, rows))
     for i in range(rows):
         for j in range(rows):
@@ -86,14 +90,8 @@ def fast_spectral_gap(adj_matrix):
             else:
                 L[i, j] = -adj_matrix[i, j]
 
-    # Eigenvalues
-    # Note: np.linalg.eigvalsh is supported in newer Numba versions.
-    # If not, we might fail.
-    # Assuming standard Numba installation.
     evals = np.linalg.eigvalsh(L)
 
-    # Sort and pick second smallest
-    # evals are usually sorted by eigvalsh
     if rows > 1:
         return evals[1]
     return 0.0

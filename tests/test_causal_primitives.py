@@ -1,8 +1,8 @@
 import pytest
 # Run these tests from the root directory of the project with `python -m pytest tests`
 
-from pymergence.StochasticMatrix import *
-from pymergence.CoarseGraining import *
+from pymergence.core.StochasticMatrix import *
+from pymergence.core.CoarseGraining import *
 import numpy as np
 
 

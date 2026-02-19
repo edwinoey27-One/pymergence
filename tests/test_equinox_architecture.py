@@ -4,8 +4,8 @@ import equinox as eqx
 import polars as pl
 import pytest
 import os
-from pymergence.jax_core import StochasticMatrix, Partition, train_partition, save_model, load_model
-from pymergence.brax_bridge import BraxDataLoader
+from pymergence.accel.jax_core import StochasticMatrix, Partition, train_partition, save_model, load_model
+from pymergence.integration.brax_bridge import BraxDataLoader
 
 def test_stochastic_matrix_methods():
     # Simple deterministic chain: 0->1, 1->0

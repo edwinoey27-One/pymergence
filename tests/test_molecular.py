@@ -1,7 +1,7 @@
 import jax
 import jax.numpy as jnp
 import pytest
-from pymergence.molecular import MolecularDataLoader
+from pymergence.integration.molecular import MolecularDataLoader
 
 def test_molecular_simulation():
     # Small simulation
