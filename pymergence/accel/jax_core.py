@@ -163,7 +163,28 @@ class Partition(eqx.Module):
         return StochasticMatrix(macro_matrix)
 
 
-def train_partition(micro_matrix: StochasticMatrix, n_macro: int, steps: int = 1000, lr: float = 0.1, key=None):
+@eqx.filter_jit
+def _loss_fn(partition, micro_matrix):
+    macro_sm = partition.coarse_grain(micro_matrix)
+    return -macro_sm.effective_information()
+
+
+@eqx.filter_jit
+def _step(partition, opt_state, micro_matrix, optimizer):
+    loss, grads = eqx.filter_value_and_grad(_loss_fn)(partition, micro_matrix)
+    updates, opt_state = optimizer.update(grads, opt_state, partition)
+    partition = eqx.apply_updates(partition, updates)
+    return partition, opt_state, loss
+
+
+@eqx.filter_jit
+def train_partition(
+    micro_matrix: StochasticMatrix,
+    n_macro: int,
+    steps: int = 1000,
+    lr: float = 0.1,
+    key=None,
+):
     if key is None:
         key = jax.random.PRNGKey(0)
 
@@ -173,24 +194,14 @@ def train_partition(micro_matrix: StochasticMatrix, n_macro: int, steps: int = 1
     optimizer = optax.adam(lr)
     opt_state = optimizer.init(partition)
 
-    @eqx.filter_jit
-    def loss_fn(partition):
-        macro_sm = partition.coarse_grain(micro_matrix)
-        return -macro_sm.effective_information()
-
-    @eqx.filter_jit
-    def step(partition, opt_state):
-        loss, grads = eqx.filter_value_and_grad(loss_fn)(partition)
-        updates, opt_state = optimizer.update(grads, opt_state, partition)
-        partition = eqx.apply_updates(partition, updates)
-        return partition, opt_state, loss
-
     def scan_step(carry, _):
         partition, opt_state = carry
-        partition, opt_state, loss = step(partition, opt_state)
+        partition, opt_state, loss = _step(partition, opt_state, micro_matrix, optimizer)
         return (partition, opt_state), loss
 
-    (final_partition, _), losses = jax.lax.scan(scan_step, (partition, opt_state), None, length=steps)
+    (final_partition, _), losses = jax.lax.scan(
+        scan_step, (partition, opt_state), None, length=steps
+    )
 
     return final_partition, losses
 
