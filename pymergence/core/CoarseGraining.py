@@ -84,6 +84,8 @@ class CoarseGraining:
         return blocks_str
         
 
+MAX_PARTITION_SIZE = 12
+
 def generate_partition_tuples(n):
     """
     Generate all partitions of n elements as tuples.
@@ -91,6 +93,11 @@ def generate_partition_tuples(n):
     This recursive function generates all possible partitions of a set of n elements,
     where each partition is represented as a tuple of tuples. Returns a generator
     that yields each partition.
+
+    Note: This function has exponential complexity (Bell number). For n > 12,
+    it raises a ValueError to prevent Denial of Service. For larger systems,
+    consider using gradient-based optimization via
+    `StochasticMatrix.optimize_coarse_graining`.
 
     Parameters
     -----------
@@ -100,7 +107,18 @@ def generate_partition_tuples(n):
     --------
     tuple of tuples
         Each partition is a tuple where each inner tuple represents a block of the partition.
+
+    Raises:
+    -------
+    ValueError
+        If n > MAX_PARTITION_SIZE (12).
     """ 
+    if n > MAX_PARTITION_SIZE:
+        raise ValueError(
+            f"Input n={n} exceeds MAX_PARTITION_SIZE ({MAX_PARTITION_SIZE}). "
+            "Exhaustive partition generation is exponential and can lead to Denial of Service. "
+            "For large systems, use StochasticMatrix.optimize_coarse_graining()."
+        )
     if n == 0:
         yield ()
         return
@@ -116,6 +134,11 @@ def generate_all_coarse_grainings(n):
     """
     Generate all possible coarse-grainings of n variables.
 
+    Note: This function has exponential complexity (Bell number). For n > 12,
+    it raises a ValueError to prevent Denial of Service. For larger systems,
+    consider using gradient-based optimization via
+    `StochasticMatrix.optimize_coarse_graining`.
+
     Parameters
     -----------
     n : int
@@ -125,7 +148,18 @@ def generate_all_coarse_grainings(n):
     --------
     list of CoarseGraining
         A list of all possible coarse-grainings.
+
+    Raises:
+    -------
+    ValueError
+        If n > MAX_PARTITION_SIZE (12).
     """
+    if n > MAX_PARTITION_SIZE:
+        raise ValueError(
+            f"Input n={n} exceeds MAX_PARTITION_SIZE ({MAX_PARTITION_SIZE}). "
+            "Exhaustive partition generation is exponential and can lead to Denial of Service. "
+            "For large systems, use StochasticMatrix.optimize_coarse_graining()."
+        )
     from itertools import combinations
     
     partition_tuples = generate_partition_tuples(n)
