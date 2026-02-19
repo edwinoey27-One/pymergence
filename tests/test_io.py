@@ -3,8 +3,8 @@ import pytest
 import os
 import equinox as eqx
 import jax
-from pymergence.io import save_causal_model, load_causal_model
-from pymergence.jax_core import Partition
+from pymergence.core.io import save_causal_model, load_causal_model
+from pymergence.accel.jax_core import Partition
 
 def test_io_roundtrip(tmp_path):
     key = jax.random.PRNGKey(0)

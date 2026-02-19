@@ -31,7 +31,7 @@ class ValidationHarness:
             # Instantiate loop with seed
             # Note: This requires agent_cls to be compatible with RuntimeLoop or pass it in.
             # For prototype, we mock the run logic or import RuntimeLoop
-            from pymergence.cascade_pulse import RuntimeLoop
+            from pymergence.integration.cascade_pulse import RuntimeLoop
 
             # Agent Run
             # We need to inject the custom agent class into RuntimeLoop

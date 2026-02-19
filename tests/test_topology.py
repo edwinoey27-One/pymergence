@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from pymergence.topology import TopologicalAnalyzer
+from pymergence.integration.topology import TopologicalAnalyzer
 
 def test_homology_circle():
     # Points on a circle have 1 connected component (H0) and 1 loop (H1).

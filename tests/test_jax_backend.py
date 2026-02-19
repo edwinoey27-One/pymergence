@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 import jax
 import jax.numpy as jnp
-from pymergence.StochasticMatrix import StochasticMatrix
+from pymergence.core.StochasticMatrix import StochasticMatrix
 
 def test_backend_detection():
     mat = np.array([[0.5, 0.5], [0.5, 0.5]])
@@ -44,7 +44,7 @@ def test_coarse_grain_consistency():
 
     # Coarse grain
     # Manually create a 2-block CG
-    from pymergence.CoarseGraining import CoarseGraining
+    from pymergence.core.CoarseGraining import CoarseGraining
     cg2 = CoarseGraining(((0, 1), (2, 3)))
 
     macro_np = sm_np.coarse_grain(cg2)

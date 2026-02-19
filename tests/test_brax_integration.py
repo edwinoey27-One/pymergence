@@ -1,7 +1,7 @@
 import pytest
 import jax
 import jax.numpy as jnp
-from pymergence.brax_integration import estimate_transition_matrix, collect_trajectory
+from pymergence.integration.brax_integration import estimate_transition_matrix, collect_trajectory
 
 def test_transition_matrix_estimation():
     # Generate synthetic data: 2 clusters, well separated
