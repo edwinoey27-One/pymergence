@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from pymergence.core.utils import kl_divergence, entropy
 from pymergence.core.CoarseGraining import CoarseGraining, generate_all_coarse_grainings
 
